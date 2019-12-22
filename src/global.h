@@ -1,10 +1,10 @@
 //
 // Created by SHL on 18.11.2017.
 //
-#include <Arduino.h>
-
 #ifndef GLOBAL_H
 #define GLOBAL_H
+
+#include <Arduino.h>
 
 #ifdef POWEROID_SDK_10_H
     #define EXTERN
