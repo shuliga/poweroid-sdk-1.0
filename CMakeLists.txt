@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/cmake/ArduinoToolchain.cmake)
-set(SDK_NAME Poweroid_SDK_10)
+set(SDK_NAME poweroid-sdk-1.0)
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 #set(CMAKE_RULE_MESSAGES OFF)
