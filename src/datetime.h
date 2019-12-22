@@ -5,7 +5,7 @@
 #ifndef DATETIME_H
 #define DATETIME_H
 
-#include "../lib/DS1307/DS1307.h"
+#include <DS1307/DS1307.h>
 
 #define TP_SEC  DS1307_SEC
 #define TP_MIN  DS1307_MIN

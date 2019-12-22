@@ -2,7 +2,6 @@
 // Created by SHL on 28.09.2019.
 //
 
-#include <DS1307/DS1307.h>
 #include "datetime.h"
 
 const char * TIME_FMT = "%02d:%02d:%02d";
