@@ -14,8 +14,6 @@
 	#include <WConstants.h>
 #endif
 
-// include types & constants of Wire ic2 lib
-#include <Wire.h>
 
 #define DS1307_SEC 0
 #define DS1307_MIN 1

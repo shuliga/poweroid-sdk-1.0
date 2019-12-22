@@ -1,5 +1,5 @@
 #include "DS1307.h"
-#include "../I2C/I2C.h"
+#include <I2C/I2C.h>
 
 DS1307::DS1307()
 {
