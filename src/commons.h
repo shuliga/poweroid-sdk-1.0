@@ -6,7 +6,6 @@
 #define COMMONS_H
 
 #include <Arduino.h>
-#include <SoftwareSerial.h>
 #include "boards.h"
 #include "global.h"
 
