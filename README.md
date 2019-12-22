@@ -1,0 +1,1 @@
+# poweroid-sdk-1.0
