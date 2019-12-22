@@ -2,10 +2,6 @@
 // Created by SHL on 20.03.2017.
 //
 
-#define INCR(val, max) val < (max) ? (val)++ : val
-#define DECR(val, min) val > (min) ? (val)-- : val
-
-#include <Wire.h>
 #include "global.h"
 #include <MultiClick/MultiClick.h>
 #include <Rotary/Rotary.h>
@@ -14,6 +10,8 @@
 #include "commands.h"
 #include "datetime.h"
 
+#define INCR(val, max) val < (max) ? (val)++ : val
+#define DECR(val, min) val > (min) ? (val)-- : val
 
 #ifndef NO_CONTROLLER
 
