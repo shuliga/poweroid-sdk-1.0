@@ -14,16 +14,16 @@ if(NOT BOARD)
     #set(BOARD pro)
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
+include_directories(lib)
+link_directories(lib)
 
-file(GLOB_RECURSE HDRS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
+file(GLOB_RECURSE HDRS src/*.h)
 message(STATUS "SDK Headers added: ${HDRS}")
 
-file(GLOB_RECURSE SRCS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE SRCS src/*.cpp)
 message(STATUS "SDK Sources added: ${SRCS}")
 
-file(GLOB_RECURSE LIB_HDRS ${CMAKE_CURRENT_SOURCE_DIR}/lib/*.h)
+file(GLOB_RECURSE LIB_HDRS lib/*.h)
 message(STATUS "Lib Headers added: ${LIB_HDRS}")
 
 generate_arduino_library(${BOARD}_${SDK_NAME} BOARD ${BOARD} SRCS ${SRCS} HDRS ${HDRS} ${LIB_HDRS})
