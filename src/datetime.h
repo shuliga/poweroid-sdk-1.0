@@ -5,6 +5,7 @@
 #ifndef DATETIME_H
 #define DATETIME_H
 
+#include <Arduino.h>
 #include <DS1307/DS1307.h>
 
 #define TP_SEC  DS1307_SEC

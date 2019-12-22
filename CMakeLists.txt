@@ -10,8 +10,8 @@ message(STATUS "Building ${SDK_NAME} library from ${CMAKE_CURRENT_SOURCE_DIR}")
 project(${SDK_NAME} CXX)
 
 if(NOT BOARD)
-    #set(BOARD uno_pro)
-    set(BOARD pro)
+    set(BOARD uno_pro)
+    #set(BOARD pro)
 endif()
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib)
