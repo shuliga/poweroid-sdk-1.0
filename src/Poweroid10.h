@@ -11,7 +11,7 @@
 #include "commander.h"
 #include "controller.h"
 #include "indicators.h"
-#ifdef RTC
+#ifdef RTCM
 #include "datetime.h"
 #endif
 

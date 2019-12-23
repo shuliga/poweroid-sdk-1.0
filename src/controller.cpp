@@ -8,7 +8,7 @@
 #include <ACROBOTIC_SSD1306/ACROBOTIC_SSD1306.h>
 #include "controller.h"
 #include "commands.h"
-#ifdef RTC
+#ifdef RTCM
 #include "datetime.h"
 #endif
 
