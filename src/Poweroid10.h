@@ -11,7 +11,9 @@
 #include "commander.h"
 #include "controller.h"
 #include "indicators.h"
+#ifdef RTC
 #include "datetime.h"
+#endif
 
 #define VERSION "POWEROID SDK 1.0"
 #define FULL_VERSION VERSION " " STRINGIZE(PWR_BOARD_VERSION)

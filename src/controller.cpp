@@ -8,7 +8,9 @@
 #include <ACROBOTIC_SSD1306/ACROBOTIC_SSD1306.h>
 #include "controller.h"
 #include "commands.h"
+#ifdef RTC
 #include "datetime.h"
+#endif
 
 #define INCR(val, max) val < (max) ? (val)++ : val
 #define DECR(val, min) val > (min) ? (val)-- : val
