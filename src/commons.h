@@ -63,15 +63,9 @@ extern SoftwareSerial SSerial;
 
 static const char *const NO_INFO_STR = "--\0";
 
-unsigned long hash(byte *data, unsigned long size);
+unsigned long hash(uint8_t *data, unsigned long size);
 
 char *idxToChar(uint8_t idx);
-
-void writeLog(const char level, const char *origin, const int code, unsigned long result);
-
-void writeLog(const char level, const char *origin, const int code, const char *result);
-
-void writeLog(const char level, const char *origin, const int code);
 
 uint8_t flashStringHelperToChar(const __FlashStringHelper *ifsh, char *dst);
 

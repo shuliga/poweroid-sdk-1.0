@@ -6,12 +6,6 @@
 
 #include <Arduino.h>
 
-#ifdef POWEROID_SDK_10_H
-    #define EXTERN
-#else
-    #define EXTERN extern
-#endif
-
 #define BUFF_SIZE 65
 #define LINE_SIZE 16
 
@@ -46,9 +40,9 @@ typedef struct {
     banner_data data;
 } banner;
 
-EXTERN char BUFF[BUFF_SIZE];
-EXTERN banner BANNER;
-EXTERN uint8_t PWR_FLAGS;
-EXTERN uint8_t COM_TOKEN;
+extern char BUFF[BUFF_SIZE];
+extern banner BANNER;
+extern uint8_t PWR_FLAGS;
+extern uint8_t COM_TOKEN;
 
 #endif //GLOBAL_H

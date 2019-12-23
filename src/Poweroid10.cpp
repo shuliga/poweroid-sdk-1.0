@@ -1,6 +1,6 @@
 #include <avr/wdt.h>
-#include "Poweroid10.h"
 #include <I2C/I2C.h>
+#include "Poweroid10.h"
 
 #if defined(__AVR_ATmega1284P__)
 #define CONST_4_HZ_TIMER 19530  // 65536 - 19530; // 20000000L / 256 / FRQ - 1; // set timer value 20MHz/256/4Hz-1

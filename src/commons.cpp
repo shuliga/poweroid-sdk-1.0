@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "commons.h"
 
 #ifdef WATCH_DOG
@@ -25,28 +24,6 @@ unsigned long hash(byte *data, unsigned long size) {
 char * idxToChar(uint8_t idx){
     static char num[5];
     return itoa(idx, num, 10);
-}
-
-void writeLog(const char level, const char *origin, const int code, unsigned long result) {
-    sprintf(BUFF, "%c [%s] %i (%lu)", level, origin, code, result);
-#ifdef SSERIAL
-    SSerial.println(BUFF);
-#else
-    Serial.println(BUFF);
-#endif
-}
-
-void writeLog(const char level, const char *origin, const int code) {
-    writeLog(level, origin, code, (unsigned long) 0L);
-}
-
-void writeLog(const char level, const char *origin, const int code, const char *result) {
-    sprintf(BUFF, "%c [%s] %i '%s'", level, origin, code, result);
-#ifdef SSERIAL
-    SSerial.println(BUFF);
-#else
-    Serial.println(BUFF);
-#endif
 }
 
 uint8_t flashStringHelperToChar(const __FlashStringHelper *ifsh, char *dst) {
