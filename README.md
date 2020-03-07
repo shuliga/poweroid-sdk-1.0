@@ -1,7 +1,7 @@
 # Poweroid SDK
 ### v1.0
 
-This SDK is developed for MCU shieled designed for Poweroid® boards.
+This SDK is developed for MCU shield designed for Poweroid® boards.
 
 ## Supported MCUs
 * ATMega328P
