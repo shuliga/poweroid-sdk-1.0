@@ -40,12 +40,14 @@
 
 #undef FACTORY_RESET_PIN
 
+#define SPI_SS_PIN 10
+
 //Indicator pins
 #ifndef SPI
-#define IND1_PIN 10
-#define IND2_PIN 11
+#define IND1_PIN 11
+#define IND2_PIN 12
 #ifndef MINI
-#define IND3_PIN 12
+#define IND3_PIN 13
 #endif  //MINI
 
 #define LED_PIN 13
@@ -56,8 +58,10 @@
 #define INA2_PIN 15
 #ifndef MINI
 #define INA3_PIN 16
-#define INA4_PIN 17
 #endif  //MINI
+
+#define BEEPER_PIN 17
+
 
 #ifdef SPI
 #define SPI_SS_PIN 10
