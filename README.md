@@ -1,4 +1,4 @@
-# PoweroidSDK
+# Poweroid SDK
 ### v1.0
 
 This SDK is developed for MCUs of Poweroid® hardware series.
