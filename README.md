@@ -1,10 +1,14 @@
 # Poweroid SDK
 ### v1.0
 
-This SDK is developed for MCUs of Poweroid® hardware series.
+This SDK is developed for MCU shieled designed for Poweroid® boards.
+
+## Supported MCUs
+* ATMega328P
+* ATMega1284P
 
 ## Features
-* Arduino© based
+* Arduino© Pro Mini compatible pin-out
 * Abstratcs sensors acturators (relays) and indicators
 * Changeable UART communication
 * Local controller with display
@@ -36,6 +40,7 @@ This SDK is developed for MCUs of Poweroid® hardware series.
 * Radio 433MHz
   * HC-02
 ### Sensors
-* DHT22 temperature sensor
+* Temperature sensor DHT22
+* Ultrasonic csensor DYP-ME007
 ### Controller
-* 8x1mm FPC connected SSD1306 128x64 OLED Display + encoder + reset button
+* 8x1mm FPC connected SSD1306 128x64 OLED Display w/ encoder w/ reset button
