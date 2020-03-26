@@ -2,8 +2,8 @@
 // Created by SHL on 15.02.2019.
 //
 
-#ifndef TIMER_BUTTON_1X1_PRO_ULTRASONIC_H
-#define TIMER_BUTTON_1X1_PRO_ULTRASONIC_H
+#ifndef ULTRASONIC_H
+#define ULTRASONIC_H
 
 #include "commons.h"
 #include "sensors.h"
@@ -19,4 +19,4 @@ private:
 
 extern Ultrasonic ULTRASONIC;
 
-#endif //TIMER_BUTTON_1X1_PRO_ULTRASONIC_H
+#endif //ULTRASONIC_H
