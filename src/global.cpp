@@ -1,7 +1,7 @@
 //
 // Created by SHL on 18.11.2017.
 //
-#include <global.h>
+#include "global.h"
 
 char BUFF[BUFF_SIZE];
 banner BANNER;

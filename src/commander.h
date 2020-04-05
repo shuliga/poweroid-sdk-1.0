@@ -27,8 +27,6 @@ private:
 
     void printBinProperty(uint8_t i);
 
-    const char *fillStateBuff(uint8_t i);
-
 };
 
 #endif // COMMANDER_H

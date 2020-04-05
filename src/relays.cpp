@@ -89,4 +89,5 @@ char * Relays::printRelay(uint8_t idx)
     SSerial.println(BUFF);
     SSerial.flush();
 #endif
+    return BUFF;
 }
