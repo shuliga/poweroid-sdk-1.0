@@ -25,15 +25,17 @@ void disarmState(uint8_t i, bool _disarm);
 RunState *getState(uint8_t i);
 
 typedef struct Context {
-    Context(const char *_signature, const char *_version, Property *_factory_props, const uint8_t _props_size,
-            const char *_id, int8_t _defaultPropIdx)
-            : signature(_signature), version(_version), PROPERTIES(_factory_props),
+    Context(const char *_signature, const char *_id,
+            Property *_factory_props, const uint8_t _props_size, int8_t _defaultPropIdx)
+            : signature(_signature), PROPERTIES(_factory_props),
               props_size(_props_size), id(_id), SENS(), RELAYS(),
               PERS(Persistence(_signature, _factory_props, _props_size)),
-              props_default_idx(_defaultPropIdx) {}
+              props_default_idx(_defaultPropIdx) {
+        sprintf(version, "%s %s-%s", id, signature, PWR_BOARD_VERSION);
+    }
 
     const char *signature;
-    const char *version;
+    char version[32];
 
     Sensors SENS;
     Relays RELAYS;

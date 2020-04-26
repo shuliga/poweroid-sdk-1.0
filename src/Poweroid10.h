@@ -15,8 +15,7 @@
 #include "datetime.h"
 #endif
 
-#define VERSION "POWEROID SDK 1.0"
-#define FULL_VERSION VERSION " " STRINGIZE(PWR_BOARD_VERSION)
+#define SDK_VERSION "1.0"
 
 const char SIGNATURE[] = "PWR";
 
