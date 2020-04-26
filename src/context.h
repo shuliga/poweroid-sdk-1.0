@@ -31,7 +31,7 @@ typedef struct Context {
               props_size(_props_size), id(_id), SENS(), RELAYS(),
               PERS(Persistence(_signature, _factory_props, _props_size)),
               props_default_idx(_defaultPropIdx) {
-        sprintf(version, "%s %s-%s", id, signature, PWR_BOARD_VERSION);
+        sprintf(version, "%s %s-%s", id, signature, STRINGIZE(PWR_BOARD_VERSION));
     }
 
     const char *signature;
