@@ -3,7 +3,6 @@
 #include "context.h"
 #include "commands.h"
 #include "commander.h"
-#include "persistence.h"
 
 static const char *ORIGIN = "CMD";
 const char *STATE_FORMAT_BUFF = "[%i] State %s: %s";
@@ -58,6 +57,7 @@ void Commander::listen() {
 
                 castCommand(cu.cmd_str.CMD_GET_DHT, ctx->SENS.printDht());
 
+#ifndef DO_NOT_PARSE_REMOTE
                 if (REMOTE_ENABLE && cmd.startsWith(cu.cmd_str.CMD_REMOTE_STATE)) {
                     ctx->peerFound = 2;
                     if (cmd.indexOf(REMOTE_HOST) > 0 && ctx->passive) {
@@ -75,6 +75,7 @@ void Commander::listen() {
                         }
                     }
                 }
+#endif
 
                 if (cmd.startsWith(cu.cmd_str.CMD_RESET_PROPS)) {
                     printCmdResponse(cmd, NULL);

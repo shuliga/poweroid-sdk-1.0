@@ -6,6 +6,7 @@
 #include "sensors.h"
 #include "commands.h"
 #include <DHT/DHT.h>
+#include <stdint.h>
 
 // Console output codes
 // 100 -
@@ -13,8 +14,6 @@
 // 201 - Sensor installed (pin)
 // 500 - DHT not installed
 // 501 - Sensor not installed (pin)
-
-#define MAX_ANALOG_VALUE 1023
 
 const long INST_DELAY = 50L;
 
@@ -82,7 +81,7 @@ void Sensors::initSensors() {
 
     analogReference(REF_1V1 ? INTERNAL_REF : DEFAULT);
     for(uint8_t i = 0; i < ARRAY_SIZE(INA_PINS); i++){
-        pinMode(INA_PINS[i], INPUT_PULLUP);
+        pinMode(INA_PINS[i], INPUT);
     }
     for(uint8_t i = 0; i < ARRAY_SIZE(IN_PINS); i++){
         pinMode(IN_PINS[i], INPUT_PULLUP);
@@ -113,8 +112,8 @@ bool Sensors::isSensorOn(uint8_t index) {
     return digitalRead(IN_PINS[index]) == LOW && installed[index];
 }
 
-int16_t Sensors::getSensorVal(uint8_t index) {
-    return analogRead(INA_PINS[index]);
+uint16_t Sensors::getSensorVal(uint8_t index) {
+    return analogRead(digitalPinToAnalogPin(INA_PINS[index]));
 }
 
 bool Sensors::isSensorVal(uint8_t index, uint8_t val) {
@@ -142,8 +141,8 @@ const char *Sensors::printSensor(uint8_t i) {
 }
 
 
-const int16_t Sensors::getNormalizedSensor(uint8_t i, int16_t min, int16_t max, uint16_t raw_min = 0, uint16_t  raw_max = MAX_ANALOG_VALUE) {
-    float raw_val = (getSensorVal(i) - raw_min) ;
-    return static_cast<const int16_t>(raw_val * (max - min) / (raw_max - raw_min) + min);
+const int16_t Sensors::getNormalizedSensor(uint8_t i, int16_t min, int16_t max, uint16_t raw_min, uint16_t  raw_max) {
+    int16_t raw_val = getSensorVal(i) - raw_min ;
+    float ratio = static_cast<const float >(max - min) / (raw_max - raw_min);
+    return static_cast<const int16_t>((raw_val < 0.0 ? 0.0 : raw_val) * ratio + min);
 }
-
