@@ -113,7 +113,11 @@ bool Sensors::isSensorOn(uint8_t index) {
 }
 
 uint16_t Sensors::getSensorVal(uint8_t index) {
+#ifdef __AVR_ATmega1284P__
     return analogRead(digitalPinToAnalogPin(INA_PINS[index]));
+#else
+    return analogRead(INA_PINS[index]);
+#endif
 }
 
 bool Sensors::isSensorVal(uint8_t index, uint8_t val) {
