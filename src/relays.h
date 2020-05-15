@@ -12,12 +12,11 @@
 #endif
 
 #ifndef MINI
-#define REL_COUNT 2
 const uint8_t OUT_PINS[] = {PWR1_PIN, PWR2_PIN};
 #else
-#define REL_COUNT 1
 const uint8_t OUT_PINS[] = {PWR1_PIN};
 #endif
+#define REL_COUNT ARRAY_SIZE(OUT_PINS)
 
 #define VIRTUAL_RELAYS REL_COUNT
 
@@ -26,15 +25,15 @@ const uint8_t OUT_PINS[] = {PWR1_PIN};
 #define REL_B 1
 #endif
 
-const uint8_t RELAYS = ARRAY_SIZE(OUT_PINS) + VIRTUAL_RELAYS;
+#define ALL_RELAYS REL_COUNT + VIRTUAL_RELAYS
 
 class Relays {
 
 private:
 
-    static bool powered[RELAYS];
+    static bool powered[ALL_RELAYS];
 
-    static int8_t mappings[VIRTUAL_RELAYS];
+    static uint8_t mappings[VIRTUAL_RELAYS];
 
 public:
 

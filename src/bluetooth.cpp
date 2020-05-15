@@ -54,6 +54,7 @@ void Bt::begin() {
     } else {
         Serial.begin(LOW_SPEED_BAUD);
     }
+    Serial.println();
 }
 
 void Bt::cleanSerial() const {

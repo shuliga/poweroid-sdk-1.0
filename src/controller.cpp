@@ -94,7 +94,7 @@ void Controller::initDisplay() {
     };
 }
 
-void Controller::outputState(bool relays) const {
+void Controller::outputHeader(bool relays) const {
     strcpy(BUFF, relays ? (const char *) ctx->RELAYS.relStatus() : ctx->id);
     padLineInBuff(BUFF, 1, 0);
     if (TOKEN_ENABLE || ctx->remoteMode){
@@ -151,7 +151,7 @@ void Controller::process() {
             bool prop_id_changed = c_prop_idx != prop_idx;
 
             if (testControl(sleep_timer) || prop_id_changed || ctx->refreshProps || ctx->refreshState) {
-                outputState(true);
+                outputHeader(true);
                 if (loadProperty(prop_idx)) {
                     outputPropDescr(BUFF);
                     outputPropVal(prop_measure, (int16_t) prop_value, false, true);
@@ -186,8 +186,7 @@ void Controller::process() {
             }
 
             if (event == HOLD) {
-                bool disarm = strcmp(getState(state_idx)->state, "DISARM") != 0;
-                cmd->disarmStateCmd(state_idx, disarm);
+                cmd->disarmStateCmd(state_idx, !isDisarmedState(state_idx));
                 c_state_idx = -1;
             }
 
@@ -203,7 +202,7 @@ void Controller::process() {
 
         case FLAG: {
             if (testControl(sleep_timer)) {
-                outputState(false);
+                outputHeader(false);
                 outputDescr("FLAGS", 1);
                 prop_max = FLAGS_MAX;
                 prop_value = PWR_FLAGS;
@@ -238,9 +237,9 @@ void Controller::process() {
         case DATE_TIME: {
 #ifndef DATETIME_H
             if (TOKEN_ENABLE)
-                    state = TOKEN;
-                else
-                    goToBrowse();
+                state = TOKEN;
+            else
+                goToBrowse();
 #else
             bool isTime = timeDateBlock == 1;
 
@@ -314,7 +313,7 @@ void Controller::process() {
 
         case TOKEN: {
             if (firstRun()) {
-                outputState(false);
+                outputHeader(false);
                 outputDescr("TOKEN", 1);
                 prop_max = TOKEN_MAX;
                 prop_value = COM_TOKEN;
@@ -444,7 +443,7 @@ void Controller::process() {
         if (state == SUSPEND || state == SLEEP) {
             state = SLEEP;
         } else {
-            outputState(true);
+            outputHeader(true);
         }
         ctx->refreshState = false;
     }
@@ -463,7 +462,7 @@ bool Controller::testControl(TimingState &timer) const {
         timer.reset();
         control_touched = false;
         if (fr) {
-            outputState(true);
+            outputHeader(true);
         }
     }
     return fr;

@@ -22,6 +22,8 @@ extern const uint8_t state_count;
 extern bool changedState[];
 
 void disarmState(uint8_t i, bool _disarm);
+bool isDisarmedState(uint8_t i);
+
 RunState *getState(uint8_t i);
 
 typedef struct Context {
