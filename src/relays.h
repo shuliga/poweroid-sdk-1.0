@@ -22,7 +22,9 @@ const uint8_t OUT_PINS[] = {PWR1_PIN};
 #define VIRTUAL_RELAYS REL_COUNT
 
 #define REL_A 0
+#ifndef MINI
 #define REL_B 1
+#endif
 
 const uint8_t RELAYS = ARRAY_SIZE(OUT_PINS) + VIRTUAL_RELAYS;
 

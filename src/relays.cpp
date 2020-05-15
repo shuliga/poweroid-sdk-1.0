@@ -5,8 +5,13 @@
 #include "relays.h"
 #include "commands.h"
 
-const char * REL_FMT="Rel[%i]: %i";
-unsigned char status[6] = ".. ..";
+static const char * REL_FMT="Rel[%i]: %i";
+
+#ifndef MINI
+static unsigned char status[6] = ".. ..";
+#else
+static unsigned char status[4] = ". .";
+#endif
 
 bool Relays::powered[RELAYS];
 
