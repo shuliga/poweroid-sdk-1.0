@@ -5,15 +5,20 @@
 #include "relays.h"
 #include "commands.h"
 
-const char * REL_FMT="Rel[%i]: %i";
-unsigned char status[6] = ".. ..";
-
-bool Relays::powered[RELAYS];
+static const char * REL_FMT="Rel[%i]: %i";
 
 #ifndef MINI
-int8_t Relays::mappings[VIRTUAL_RELAYS] = {2, 3};
+static unsigned char status[6] = ".. ..";
 #else
-int8_t Relays::mappings[VIRTUAL_RELAYS] = {2};
+static unsigned char status[4] = ". .";
+#endif
+
+bool Relays::powered[ALL_RELAYS];
+
+#ifndef MINI
+uint8_t Relays::mappings[VIRTUAL_RELAYS] = {2, 3};
+#else
+uint8_t Relays::mappings[VIRTUAL_RELAYS] = {2};
 #endif
 
 void Relays::power(uint8_t i, bool _power)
@@ -26,9 +31,9 @@ void Relays::power(uint8_t i, bool _power)
         digitalWrite(OUT_PINS[i], static_cast<uint8_t>(_power != RELAY_ON_LOW));
 #endif
         int8_t mappedIdx = mappings[i];
-        if (mapped && mappedIdx >= 0)
+        if (mapped && mappedIdx >= REL_COUNT)
         {
-            powered[mappedIdx] = _power;
+            powered[i + REL_COUNT] = _power;
             castRelay(static_cast<uint8_t>(mappedIdx));
         }
     }
@@ -36,7 +41,7 @@ void Relays::power(uint8_t i, bool _power)
 
 uint8_t Relays::size()
 {
-    return ARRAY_SIZE(OUT_PINS);
+    return REL_COUNT;
 }
 
 void Relays::castRelay(uint8_t idx){
@@ -46,34 +51,34 @@ void Relays::castRelay(uint8_t idx){
 
 unsigned char * Relays::relStatus()
 {
-    const uint8_t r_size = mapped ? RELAYS : size();
+    const uint8_t r_size = mapped ? ALL_RELAYS : REL_COUNT;
     for(uint8_t i = 0; i < r_size; ++i)
     {
-        status[i + (i >= size() ? 1 : 0)] = (powered[i] ? (unsigned char) 128 : (unsigned char)127);
+        status[i + (i >= REL_COUNT ? 1 : 0)] = (powered[i] ? (unsigned char) 128 : (unsigned char)127);
     }
     return status;
 }
 
 void Relays::shutDown()
 {
-    for(uint8_t i=0; i < size(); ++i)
+    for(uint8_t i=0; i < REL_COUNT; ++i)
     {
         digitalWrite(OUT_PINS[i], RELAY_ON_LOW);
     }
 }
 
 void Relays::castMappedRelays(){
-    const uint8_t r_size = mapped ? RELAYS : size();
+    const uint8_t r_size = mapped ? ALL_RELAYS : REL_COUNT;
     for(uint8_t i = size(); i < r_size; ++i) {
         castRelay(i);
         delay(50);
     }
 }
 
-int8_t Relays::getMappedFromVirtual(uint8_t i) {
-    for (uint8_t idx = 0; idx < VIRTUAL_RELAYS; idx++) {
-        int8_t mappedRelay = mappings[idx];
-        if (mappedRelay == i) return idx;
+int8_t Relays::getMappedFromVirtual(uint8_t idx) {
+    for (uint8_t i = 0; i < VIRTUAL_RELAYS; ++i) {
+        int8_t mappedRelay = mappings[i];
+        if (mappedRelay == idx) return i;
     }
     return -1;
 }

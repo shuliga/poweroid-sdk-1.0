@@ -58,7 +58,7 @@ private:
 
     void padLineCenteredInBuff(char *_buff);
 
-    void outputState(bool relays) const;
+    void outputHeader(bool relays) const;
 
     bool canGoToEdit();
 
