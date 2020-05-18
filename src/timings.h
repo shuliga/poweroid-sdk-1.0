@@ -36,19 +36,60 @@ typedef struct TimingState {
 
     TimingState(unsigned long interval) : interval(interval) {};
 
-    void reset();
-
     unsigned long getCurrent();
 
     bool testInterval(unsigned long current);
 
-    bool countdown(bool on, bool suspend, bool cancel);
+    /**
+     *
+     * Returns <code>true</code> as soon as initiated by <code>trigger</code> and till timer countdown was not reached.<br/>
+     * Countdown can be temporary suspended or permanently canceled.<br/>
+     * If countdown was ended or cancelled, while <code>trigger</code> is on, it can be restarted only after setting <code>trigger</code> to false.
+     * Also reset() can be called to countdown reinitialize.
+     *
+     * @param trigger triggers countdown, should pass false state to initiate next countdown
+     * @param suspend suspends countdown timer
+     * @param cancel cancels countdown
+     *
+     * @return true if triggered and not suspended or cancelled
+     *
+     */
+    bool countdown(bool trigger, bool suspend, bool cancel);
 
+    /**
+     *
+     * Defines if time has passed since trigger was set to true.<br/>
+     * As soon as trigger is false, the result is reset to false as well
+     *
+     * @param trigger
+     * @return true if time has passed
+     */
     bool isTimeAfter(bool trigger);
 
+    /**
+     *
+     * Inverses state as soon as timer interval has passed.
+     * On inverse, the timer is set back again and cycle continues.
+     *
+     * @return oscillating state
+     */
     bool flash();
 
+    /**
+     *
+     * Returns true once when timer interval has passed, then false.
+     * The timer is set back again and cycle continues.
+     *
+     * @return ping state
+     */
     bool ping();
+
+    /**
+     *
+     * Resets the timer and state. Used for <code>countdown</code>, <code>isTimeAfter</code> functions.
+     *
+     */
+    void reset();
 
     long millsToGo(unsigned long current);
 

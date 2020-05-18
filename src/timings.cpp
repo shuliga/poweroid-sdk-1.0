@@ -24,13 +24,13 @@ long TimingState::millsToGo(unsigned long current) {
     return interval - (current - mils - delta);
 }
 
-bool TimingState::countdown(bool on, bool suspend, bool cancel) {
+bool TimingState::countdown(bool trigger, bool suspend, bool cancel) {
     unsigned long current = getCurrent();
-    if (!state && !dirty && on) {
+    if (!state && !dirty && trigger) {
         mils = current;
         state = true;
     }
-    if (dirty && !on) {
+    if (dirty && !trigger) {
         dirty = false;
     }
     if (state) {
@@ -47,19 +47,12 @@ bool TimingState::countdown(bool on, bool suspend, bool cancel) {
         if ((testInterval(current) || cancel)) {
             mils = 0;
             state = false;
-            dirty = on;
+            dirty = trigger;
         }
     }
     return state;
 }
 
-/**
- *
- * Defines if time has passed since trigger was set to true
- *
- * @param trigger
- * @return true if time has passed
- */
 bool TimingState::isTimeAfter(bool trigger) {
     unsigned long current = getCurrent();
     if (trigger) {
