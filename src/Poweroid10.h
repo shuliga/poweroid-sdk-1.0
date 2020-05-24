@@ -17,12 +17,23 @@
 
 #define SDK_VERSION "1.0"
 
+#define LATITUDE 50
+
 const char SIGNATURE[] = "PWR";
 
 extern void applyTimings();
 extern void fillOutput();
 extern void processSensors();
 extern void runPowerStates();
+
+#ifdef DATETIME_H
+extern int8_t hrs;
+extern int8_t min;
+extern int8_t sec;
+extern int8_t day;
+extern int8_t month;
+#endif
+
 
 const int DEFAULT_BAUD = 9600;
 

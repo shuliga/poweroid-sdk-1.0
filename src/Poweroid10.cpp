@@ -10,6 +10,20 @@
 #define TIMER_PRESCALER (0 << CS12) | (1 << CS11) | (1 << CS10) // 64 prescaler
 #endif
 
+#ifdef DATETIME_H
+#define RAD(D) ((D) * 3.141529) / 180
+#define DEG(R) ((R)  * 180.0) / 3.141529
+#define SPRING_EQUINOX_DAY 80
+#define NOON_HOUR 13.35
+
+int8_t hrs;
+int8_t min;
+int8_t sec;
+int8_t day;
+int8_t month;
+#endif
+
+
 volatile uint8_t timerCounter = 0;
 uint8_t pastTimerCounter = 0;
 
@@ -33,22 +47,33 @@ void initTimer_1() {
 
 }
 
-void setTimerFlags(){
-    if (timerCounter != pastTimerCounter){
-        for(uint8_t i = 0; i < TIMERS_COUNT; i++){
-            timerFlags = timerCounter % (1U << i ) == 0 ? timerFlags | 1U << i : timerFlags;
+void setTimerFlags() {
+    if (timerCounter != pastTimerCounter) {
+        for (uint8_t i = 0; i < TIMERS_COUNT; i++) {
+            timerFlags = timerCounter % (1U << i) == 0 ? timerFlags | 1U << i : timerFlags;
         }
         pastTimerCounter = timerCounter;
     }
 }
 
-void setFlashCounters(){
-    if (test_timer(TIMER_1HZ)){
+void setFlashCounters() {
+    if (test_timer(TIMER_1HZ)) {
         timerCounter_1Hz++;
         timerCounter_1Hz = timerCounter_1Hz >= TIMERS_FLASH_COUNTS ? 0 : timerCounter_1Hz;
+#ifdef DATETIME_H
+        sec = RTC.get(DS1307_SEC, true);
+        min = sec == 0 ? RTC.get(DS1307_MIN, false) : min;
+        hrs = min == 0 ? RTC.get(DS1307_HR, false) : hrs;
+        day = hrs == 1 ? RTC.get(DS1307_DATE, false) : day;
+        month = day == 1 ? RTC.get(DS1307_MTH, false) : month;
+        double sun_declination = (23 + 27.0 / 60.0) * sin(360.0 / 365.25 * (day + month * 30.42 - SPRING_EQUINOX_DAY));
+        double ha = DEG(acos(cos(RAD(90.833)) / (cos(RAD(LATITUDE)) * cos(RAD(sun_declination))) -
+                             tan(RAD(LATITUDE)) * tan(RAD(sun_declination))));
+        DAYLIGHT = hrs >= NOON_HOUR - ha / 15 && hrs <= NOON_HOUR + ha / 15;
+#endif
     }
 
-    if (test_timer(TIMER_4HZ)){
+    if (test_timer(TIMER_4HZ)) {
         timerCounter_4Hz++;
         timerCounter_4Hz = timerCounter_4Hz >= TIMERS_FLASH_COUNTS ? 0 : timerCounter_4Hz;
     }
@@ -117,6 +142,7 @@ void Pwr::run() {
 
     setTimerFlags();
     setFlashCounters();
+
     applyTimings();
 
 #ifdef WATCH_DOG
@@ -139,12 +165,15 @@ void Pwr::run() {
         CTX->connected = newConnected;
     }
 
-    if (CTX->canAccessLocally() && test_timer(TIMER_1HZ)){
+    if (CTX->canAccessLocally() && test_timer(TIMER_1HZ)) {
         fillOutput();
     }
 
 #ifndef NO_CONTROLLER
     CTRL->process();
+    if (!(timerCounter_1Hz % (TIMERS_FLASH_COUNTS - 1))) {
+        CTRL->adjustBrightness();
+    }
 #endif
 
     if (updateConnected && newConnected && CTX->canRespond()) {
@@ -161,7 +190,7 @@ void Pwr::run() {
     runPowerStates();
 #endif
 
-    if(CTX->remoteMode && CTX->passive && !CTX->connected){
+    if (CTX->remoteMode && CTX->passive && !CTX->connected) {
         REL->shutDown();
     }
 
@@ -172,7 +201,7 @@ void Pwr::run() {
 }
 
 void Pwr::printVersion() {
-    if (CTX->canRespond()){
+    if (CTX->canRespond()) {
         Serial.println(CTX->version);
     }
 }
@@ -218,7 +247,7 @@ void Pwr::power(uint8_t i, bool power) {
 }
 
 void Pwr::processChangedStates() {
-    for(uint8_t i = 0; i < state_count; i++){
+    for (uint8_t i = 0; i < state_count; i++) {
         if (changedState[i]) {
             Serial.println(CMD->printState(i));
             changedState[i] = false;

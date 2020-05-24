@@ -8,8 +8,11 @@
 #include <ACROBOTIC_SSD1306/ACROBOTIC_SSD1306.h>
 #include "controller.h"
 #include "commands.h"
+
 #ifdef RTCM
+
 #include "datetime.h"
+
 #endif
 
 #define INCR(val, max) val < (max) ? (val)++ : val
@@ -19,6 +22,8 @@
 
 #define DISPLAY_BASE 1
 #define DISPLAY_BOTTOM 7
+#define DISPLAY_LAST_COL 127
+#define DISPLAY_CENTER_COL  63
 
 static enum State {
     EDIT_PROP, BROWSE, STORE, SLEEP, STATES, SUSPEND, FLAG, TOKEN, DATE_TIME
@@ -42,6 +47,7 @@ static uint8_t c_byte_value = 255;
 static long c_prop_value = -1;
 static long old_prop_value;
 static bool dither = false;
+static uint8_t prev_banner_mode = 0;
 
 static uint8_t timeDateBlock = 0;
 static uint8_t dateTimePartIdx = 0;
@@ -90,20 +96,33 @@ void Controller::initEncoderInterrupts() {
 void Controller::initDisplay() {
     if (oled.checkAndInit(FLIP_DISPLAY)) {
         oled.clearDisplay();
-        oled.setBrightness(0);
+        adjustBrightness();
     };
+}
+
+void Controller::adjustBrightness(){
+    oled.setBrightness(DAYLIGHT ? 255 : 0);
 }
 
 void Controller::outputHeader(bool relays) const {
     strcpy(BUFF, relays ? (const char *) ctx->RELAYS.relStatus() : ctx->id);
     padLineInBuff(BUFF, 1, 0);
-    if (TOKEN_ENABLE || ctx->remoteMode){
+    if (relays) {
+        strncpy(BUFF + ctx->RELAYS.size() * 2 + 2, CUSTOM_HEADER, 3);
+    }
+    if (TOKEN_ENABLE || ctx->remoteMode) {
         BUFF[15] = (unsigned char) (TOKEN_ENABLE ? COM_TOKEN + 48 : (ctx->remoteMode ? ((
                 (ctx->connected ? CHAR_CONNECTED : CHAR_DISCONNECTED) + (ctx->passive ? 0 : 2))) : '\0'));
     }
     oled.setTextXY(0, 0);
     oled.putString(BUFF);
 }
+
+void Controller::outputBuffCentered() {
+//    padLineCenteredInBuff();
+    oled.outputTextXY(DISPLAY_BASE + 2, DISPLAY_CENTER_COL, BUFF, true, dither);
+}
+
 
 void Controller::process() {
 
@@ -179,8 +198,7 @@ void Controller::process() {
                 strcpy(BUFF, getState(state_idx)->name);
                 outputPropDescr(BUFF);
                 strcpy(BUFF, getState(state_idx)->state);
-                padLineCenteredInBuff(BUFF);
-                oled.outputTextXY(DISPLAY_BASE + 2, 64, BUFF, true, false);
+                outputBuffCentered();
                 outputStatus(F("State:"), state_idx);
                 c_state_idx = state_idx;
             }
@@ -212,8 +230,7 @@ void Controller::process() {
             if (prop_value != c_byte_value) {
                 PWR_FLAGS = (uint8_t) prop_value;
                 itoa(PWR_FLAGS, BUFF, 2);
-                padLineCenteredInBuff(BUFF);
-                oled.outputTextXY(DISPLAY_BASE + 2, 64, BUFF, true, false);
+                outputBuffCentered();
                 c_byte_value = PWR_FLAGS;
                 outputStatus(F("Decimal:"), PWR_FLAGS);
             }
@@ -244,7 +261,7 @@ void Controller::process() {
             bool isTime = timeDateBlock == 1;
 
             if (testControl(sleep_timer)) {
-                outputState(false);
+                outputHeader(false);
                 timeDateBlock = 0;
                 dateTimePartIdx = 0;
                 prop_max = 1;
@@ -255,24 +272,23 @@ void Controller::process() {
                 outputStatus(F("     "), 0);
             }
 
-            if (prop_value != 0 ) {
-                DATETIME.dialDateTimeString( isTime ? timeString : dateString, dateTimePartIdx, isTime, prop_value < 0, false);
+            if (prop_value != 0) {
+                DATETIME.dialDateTimeString(isTime ? timeString : dateString, dateTimePartIdx, isTime, prop_value < 0,
+                                            false);
                 prop_value = 0;
             }
 
-            if (test_timer(TIMER_2HZ)){
+            if (test_timer(TIMER_2HZ)) {
                 outputDescr(isTime ? time : date, 1);
                 if (isTime)
                     strcpy(BUFF, timeString);
                 else
                     strcpy(BUFF, dateString);
 
-                if (flash_symm(timerCounter_4Hz)){
+                if (flash_symm(timerCounter_4Hz)) {
                     DATETIME.screenDateTimePart(BUFF, dateTimePartIdx);
                 }
-
-                padLineCenteredInBuff(BUFF);
-                oled.outputTextXY(DISPLAY_BASE + 2, 64, BUFF, true, false);
+                outputBuffCentered();
             }
 
             if (event == HOLD) {
@@ -283,10 +299,10 @@ void Controller::process() {
 
             if (event == CLICK) {
                 dateTimePartIdx++;
-                if (dateTimePartIdx == 3){
+                if (dateTimePartIdx == 3) {
                     dateTimePartIdx = 0;
                     timeDateBlock++;
-                    if (timeDateBlock == 2){
+                    if (timeDateBlock == 2) {
                         timeDateBlock = 0;
                     }
                 }
@@ -296,7 +312,7 @@ void Controller::process() {
             if (sleep_timer.isTimeAfter(true)) {
                 timeDateBlock++;
                 sleep_timer.reset();
-                if (timeDateBlock = 2){
+                if (timeDateBlock = 2) {
                     goToBrowse();
                 }
             }
@@ -323,7 +339,7 @@ void Controller::process() {
             if (prop_value != c_byte_value) {
                 COM_TOKEN = (uint8_t) prop_value;
                 itoa(COM_TOKEN, BUFF, 10);
-                oled.outputTextXY(DISPLAY_BASE + 2, 64, BUFF, true, false);
+                outputBuffCentered();
                 c_byte_value = COM_TOKEN;
                 outputStatus(F("Decimal:"), COM_TOKEN);
             }
@@ -374,37 +390,51 @@ void Controller::process() {
 
             // Output Sleep Screen
             if (test_timer(TIMER_2HZ) && oled.getConnected()) {
-                if (BANNER.mode == 0) {
-                    padLineCenteredInBuff(BANNER.data.text);
-                    oled.outputTextXY(DISPLAY_BASE + 2, 64, BUFF, true, dither);
-                } else {
-                    for (uint8_t i = 0; i < BANNER.mode; i++) {
-                        int16_t val = BANNER.data.gauges[i].val;
-                        int16_t min = BANNER.data.gauges[i].min;
-                        int16_t max = BANNER.data.gauges[i].max;
-                        int16_t g_min = BANNER.data.gauges[i].g_min;
-                        int16_t g_max = BANNER.data.gauges[i].g_max;
-                        int16_t col_min = normalizeGauge(min, g_min, g_max);
-                        int16_t col_max = normalizeGauge(max, g_min, g_max);
-                        uint8_t row = i == 0 ? 0 : DISPLAY_BOTTOM;
-                        int8_t direction = i == 0 ? 1 : -1;
-                        uint8_t char_col_min = col_min / 8 + 1;
-                        uint8_t char_col_max = col_max / 8 + 1;
-                        char FMT[9];
-                        sprintf(FMT, "%%%dd%%%dd", char_col_min, char_col_max - char_col_min);
-                        sprintf(BUFF, FMT, min, max);
-                        oled.setTextXY(row, 0);
-                        oled.putString(BUFF);
-                        oled.outputLineGauge(row + direction, normalizeGauge(val, g_min, g_max), col_min, col_max,
-                                             direction == -1);
-                        sprintf(BUFF, "%d %s", val, MEASURES[BANNER.data.gauges[i].measure]);
-                        padLineCenteredInBuff(BUFF);
-                        if (BANNER.mode == 1) {
-                            oled.outputTextXY(DISPLAY_BASE + 1, 64, BUFF, true, dither);
-                        } else {
-                            oled.setTextXY(row + (direction * 2), 0);
+                if (prev_banner_mode != BANNER.mode){
+                    oled.clearDisplay();
+                    prev_banner_mode = BANNER.mode;
+                }
+                switch (BANNER.mode) {
+                    case 0: {
+                        strcpy(BUFF, BANNER.data.text);
+                        outputBuffCentered();
+                        break;
+                    }
+                    case 1:
+                    case 2: {
+                        for (uint8_t i = 0; i < BANNER.mode; i++) {
+                            int16_t val = BANNER.data.gauges[i].val;
+                            int16_t min = BANNER.data.gauges[i].min;
+                            int16_t max = BANNER.data.gauges[i].max;
+                            int16_t g_min = BANNER.data.gauges[i].g_min;
+                            int16_t g_max = BANNER.data.gauges[i].g_max;
+                            int16_t col_min = normalizeGauge(min, g_min, g_max);
+                            int16_t col_max = normalizeGauge(max, g_min, g_max);
+                            uint8_t row = i == 0 ? 0 : DISPLAY_BOTTOM;
+                            int8_t direction = i == 0 ? 1 : -1;
+                            uint8_t char_col_min = col_min / 8 + 1;
+                            uint8_t char_col_max = col_max / 8 + 1;
+                            char FMT[9];
+                            sprintf(FMT, "%%%dd%%%dd", char_col_min, char_col_max - char_col_min);
+                            sprintf(BUFF, FMT, min, max);
+                            oled.setTextXY(row, 0);
                             oled.putString(BUFF);
+                            oled.outputLineGauge(row + direction, normalizeGauge(val, g_min, g_max), col_min, col_max,
+                                                 direction == -1);
+                            sprintf(BUFF, "%d %s", val, MEASURES[BANNER.data.gauges[i].measure]);
+                            if (BANNER.mode == 1) {
+                                outputBuffCentered();
+                            } else {
+                                padLineCenteredInBuff();
+                                oled.setTextXY(row + (direction * 2), 0);
+                                oled.putString(BUFF);
+                                BUFF[0] = '\0';
+                                padLineCenteredInBuff();
+                                oled.setTextXY(row + (direction * 3), 0);
+                                oled.putString(BUFF);
+                            }
                         }
+                        break;
                     }
                 }
             }
@@ -412,7 +442,7 @@ void Controller::process() {
             // Exit SLEEP state on event
             if (event == CLICK) {
                 switchDisplay(true);
-                state = BROWSE;
+                goToBrowse();
             };
 
             if (control_touched && ctx->props_default_idx >= 0 && canGoToEdit()) {
@@ -474,6 +504,7 @@ void Controller::goToBrowse() const {
     c_prop_value = -1;
     c_byte_value = 255;
 
+    dither = false;
     state = BROWSE;
 }
 
@@ -563,7 +594,8 @@ void Controller::outputDescr(const char *_buff, uint8_t lines) const {
 void Controller::outputStatus(const __FlashStringHelper *txt, const long val) {
     flashStringHelperToChar(txt, BUFF);
     oled.setTextXY(DISPLAY_BOTTOM, 0);
-    uint8_t prop_size = static_cast<uint8_t>(val > 0 ? log10((double) val) + 1 : (val == 0 ? 1 : log10((double) -val) + 2));
+    uint8_t prop_size = static_cast<uint8_t>(val > 0 ? log10((double) val) + 1 : (val == 0 ? 1 : log10((double) -val) +
+                                                                                                 2));
     padLineInBuff(BUFF, 1, prop_size);
     oled.putString(BUFF);
     oled.setTextXY(DISPLAY_BOTTOM, (unsigned char) (LINE_SIZE - prop_size));
@@ -581,13 +613,13 @@ void Controller::padLineInBuff(char *_buff, uint8_t lines, uint8_t tail) {
     BUFF[t] = '\0';
 }
 
-void Controller::padLineCenteredInBuff(char *_buff) {
-    const uint8_t text_size = strlen(_buff);
+void Controller::padLineCenteredInBuff() {
+    const uint8_t text_size = strlen(BUFF);
     const uint8_t text_start = (LINE_SIZE - text_size) / 2;
     for (uint8_t i = 0; i < LINE_SIZE; i++) {
         if (i < text_size) {
             uint8_t text_base = text_size - 1 - i;
-            BUFF[text_base + text_start] = _buff[text_base];
+            BUFF[text_base + text_start] = BUFF[text_base];
         }
         uint8_t index = LINE_SIZE - i - 1;
         if (index < text_start || index >= (LINE_SIZE + text_size) / 2) {
@@ -606,8 +638,7 @@ void Controller::outputPropVal(uint8_t measure_idx, int16_t _prop_val, bool brac
     } else {
         noInfoToBuff();
     }
-    padLineCenteredInBuff(BUFF);
-    oled.outputTextXY(DISPLAY_BASE + 2, 64, BUFF, true, false);
+    outputBuffCentered();
 }
 
 #ifdef ENC1_PIN
@@ -629,7 +660,7 @@ ISR(PCVECT) {
                 }
 
                 case BROWSE: {
-                    if(enablePropControl) {
+                    if (enablePropControl) {
                         input == DIR_CW ? DECR(prop_idx, 0) : INCR(prop_idx, props_idx_max);
                     }
                     break;

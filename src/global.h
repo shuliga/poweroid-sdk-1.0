@@ -41,8 +41,10 @@ typedef struct {
 } banner;
 
 extern char BUFF[BUFF_SIZE];
+extern char CUSTOM_HEADER[3];
 extern banner BANNER;
 extern uint8_t PWR_FLAGS;
 extern uint8_t COM_TOKEN;
+extern bool DAYLIGHT;
 
 #endif //GLOBAL_H

@@ -54,23 +54,12 @@
 #endif
 
 //Analogue signal IN pins
-#if not defined(__AVR_ATmega1284P__)
 #define INA1_PIN 14
 #define INA2_PIN 15
 #ifndef MINI
 #define INA3_PIN 16
 #endif  //MINI
-
 #define BEEPER_PIN 17
-#else
-#define INA1_PIN 14
-#define INA2_PIN 15
-#ifndef MINI
-#define INA3_PIN 16
-#endif  //MINI
-
-#define BEEPER_PIN 17
-#endif
 
 #ifdef SPI
 #define SPI_SS_PIN 10

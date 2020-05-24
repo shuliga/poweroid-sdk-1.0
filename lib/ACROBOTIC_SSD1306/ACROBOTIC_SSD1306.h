@@ -131,7 +131,7 @@ class ACROBOTIC_SSD1306 {
     void setWindow(uint8_t row_s, uint8_t row_e, uint8_t col_s, uint8_t col_e);
     uint8_t getTextWidth(const char *_text);
 
-    void cleanPage(const uint8_t rows, const uint8_t s_width, uint8_t e_width, int8_t delta);
+    void cleanPage(const uint8_t rows, const uint8_t s_col, uint8_t e_col);
 
     void setPageMode(uint8_t command, uint8_t start, uint8_t end);
 };

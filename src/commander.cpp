@@ -99,7 +99,9 @@ void Commander::listen() {
 
                 if (cmd.startsWith(cu.cmd_str.CMD_SET_FLAGS)) {
                     if (getValIndex() > 1){
-                        PWR_FLAGS = strtol(cmd.substring(getValIndex()).c_str(), NULL, 2);
+// Changed to atoi() due to memory saving measures
+                        PWR_FLAGS = atoi(cmd.c_str());
+//                        PWR_FLAGS = strtol(cmd.substring(getValIndex()).c_str(), NULL, 2);
                     }
                 }
 
