@@ -100,7 +100,7 @@ void Controller::initDisplay() {
     };
 }
 
-void Controller::adjustBrightness(){
+void Controller::adjustBrightness() {
     oled.setBrightness(DAYLIGHT ? 255 : 0);
 }
 
@@ -390,7 +390,7 @@ void Controller::process() {
 
             // Output Sleep Screen
             if (test_timer(TIMER_2HZ) && oled.getConnected()) {
-                if (prev_banner_mode != BANNER.mode){
+                if (prev_banner_mode != BANNER.mode) {
                     oled.clearDisplay();
                     prev_banner_mode = BANNER.mode;
                 }
@@ -401,8 +401,10 @@ void Controller::process() {
                         break;
                     }
                     case 1:
-                    case 2: {
-                        for (uint8_t i = 0; i < BANNER.mode; i++) {
+                    case 2:
+                    case 3:
+                    case 4: {
+                        for (int8_t i = 0; i < (BANNER.mode > 2 ? BANNER.mode - 2 : BANNER.mode); ++i) {
                             int16_t val = BANNER.data.gauges[i].val;
                             int16_t min = BANNER.data.gauges[i].min;
                             int16_t max = BANNER.data.gauges[i].max;
@@ -428,10 +430,12 @@ void Controller::process() {
                                 padLineCenteredInBuff();
                                 oled.setTextXY(row + (direction * 2), 0);
                                 oled.putString(BUFF);
-                                BUFF[0] = '\0';
-                                padLineCenteredInBuff();
-                                oled.setTextXY(row + (direction * 3), 0);
-                                oled.putString(BUFF);
+                                if (BANNER.mode > 2) {
+                                    strcpy(BUFF, EXTRA_BUFF[i]);
+                                    padLineCenteredInBuff();
+                                    oled.setTextXY(row + (direction * 3), 0);
+                                    oled.putString(BUFF);
+                                }
                             }
                         }
                         break;

@@ -1,6 +1,6 @@
+#include "Poweroid10.h"
 #include <avr/wdt.h>
 #include <I2C/I2C.h>
-#include "Poweroid10.h"
 
 #if defined(__AVR_ATmega1284P__)
 #define CONST_4_HZ_TIMER 19530  // 65536 - 19530; // 20000000L / 256 / FRQ - 1; // set timer value 20MHz/256/4Hz-1
@@ -16,12 +16,12 @@
 #define SPRING_EQUINOX_DAY 80
 #define NOON_HOUR 13.35
 
-int8_t hrs;
-int8_t min;
-int8_t sec;
-int8_t day;
-int8_t month;
-#endif
+int8_t hrs = 1;
+int8_t min = 0;
+int8_t sec = 0;
+int8_t day = 1;
+int8_t month = 1;
+#endif //DATETIME_H
 
 
 volatile uint8_t timerCounter = 0;
@@ -56,20 +56,25 @@ void setTimerFlags() {
     }
 }
 
+void setDaylight(){
+    sec = RTC.get(DS1307_SEC, true);
+    min = sec == 0 ? RTC.get(DS1307_MIN, false) : min;
+    hrs = min == 0 ? RTC.get(DS1307_HR, false) : hrs;
+    day = hrs == 1 ? RTC.get(DS1307_DATE, false) : day;
+    month = day == 1 ? RTC.get(DS1307_MTH, false) : month;
+    double sun_declination = (23 + 27.0 / 60.0) * sin(360.0 / 365.25 * (day + month * 30.42 - SPRING_EQUINOX_DAY));
+    double ha = DEG(acos(cos(RAD(90.833)) / (cos(RAD(LATITUDE)) * cos(RAD(sun_declination))) -
+                         tan(RAD(LATITUDE)) * tan(RAD(sun_declination))));
+    double hrs_float = hrs + min / 60.0 + sec / 3600.0;
+    DAYLIGHT = hrs_float >= NOON_HOUR - (ha / 15) && hrs_float <= NOON_HOUR + (ha / 15);
+}
+
 void setFlashCounters() {
     if (test_timer(TIMER_1HZ)) {
         timerCounter_1Hz++;
         timerCounter_1Hz = timerCounter_1Hz >= TIMERS_FLASH_COUNTS ? 0 : timerCounter_1Hz;
 #ifdef DATETIME_H
-        sec = RTC.get(DS1307_SEC, true);
-        min = sec == 0 ? RTC.get(DS1307_MIN, false) : min;
-        hrs = min == 0 ? RTC.get(DS1307_HR, false) : hrs;
-        day = hrs == 1 ? RTC.get(DS1307_DATE, false) : day;
-        month = day == 1 ? RTC.get(DS1307_MTH, false) : month;
-        double sun_declination = (23 + 27.0 / 60.0) * sin(360.0 / 365.25 * (day + month * 30.42 - SPRING_EQUINOX_DAY));
-        double ha = DEG(acos(cos(RAD(90.833)) / (cos(RAD(LATITUDE)) * cos(RAD(sun_declination))) -
-                             tan(RAD(LATITUDE)) * tan(RAD(sun_declination))));
-        DAYLIGHT = hrs >= NOON_HOUR - ha / 15 && hrs <= NOON_HOUR + ha / 15;
+        setDaylight();
 #endif
     }
 
@@ -165,7 +170,7 @@ void Pwr::run() {
         CTX->connected = newConnected;
     }
 
-    if (CTX->canAccessLocally() && test_timer(TIMER_1HZ)) {
+    if (CTX->canAccessLocally() && test_timer(TIMER_2HZ)) {
         fillOutput();
     }
 

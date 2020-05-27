@@ -41,6 +41,7 @@ typedef struct {
 } banner;
 
 extern char BUFF[BUFF_SIZE];
+extern char EXTRA_BUFF[2][LINE_SIZE + 1];
 extern char CUSTOM_HEADER[3];
 extern banner BANNER;
 extern uint8_t PWR_FLAGS;

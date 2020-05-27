@@ -53,9 +53,9 @@ bool TimingState::countdown(bool trigger, bool suspend, bool cancel) {
     return state;
 }
 
-bool TimingState::isTimeAfter(bool trigger) {
+bool TimingState::isTimeAfter(bool state_on) {
     unsigned long current = getCurrent();
-    if (trigger) {
+    if (state_on) {
         if (testInterval(current)) {
             state = true;
         }

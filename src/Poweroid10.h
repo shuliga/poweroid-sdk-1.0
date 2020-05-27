@@ -7,7 +7,6 @@
 #include "relays.h"
 #include "sensors.h"
 #include "bluetooth.h"
-#include "context.h"
 #include "commander.h"
 #include "controller.h"
 #include "indicators.h"
