@@ -22,6 +22,8 @@ public:
 
     void process();
 
+    void adjustBrightness();
+
 private:
     Context *ctx;
     Commander *cmd;
@@ -54,16 +56,17 @@ private:
 
     void copyProperty(Property &prop, uint8_t idx) const;
 
-    static void padLineInBuff(char *_buff, uint8_t lines, uint8_t tail);
-
-    void padLineCenteredInBuff(char *_buff);
-
     void outputHeader(bool relays) const;
 
     bool canGoToEdit();
 
+    static void padLineInBuff(char *_buff, uint8_t lines, uint8_t tail);
+
+    static void padLineCenteredInBuff();
+
     static uint8_t normalizeGauge(uint16_t val, uint16_t min, uint16_t max);
 
+    static void outputBuffCentered();
 };
 
 

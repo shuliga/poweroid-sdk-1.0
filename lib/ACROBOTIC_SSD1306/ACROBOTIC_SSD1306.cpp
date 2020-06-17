@@ -253,20 +253,19 @@ void ACROBOTIC_SSD1306::setWindow(uint8_t row_s, uint8_t row_e, uint8_t col_s, u
 void ACROBOTIC_SSD1306::cleanPages(const uint8_t rows, const uint8_t col, const uint8_t _l_width, uint8_t _n_width,
                                    const bool centered) {
     if (_l_width > _n_width) {
-        int8_t delta = _l_width - _n_width;
         if (!centered) {
-            cleanPage(rows, col + _n_width, col + _l_width - 1, delta);
+            cleanPage(rows, col + _n_width, col + _l_width);
         } else {
-            cleanPage(rows, col - (_l_width + 1) / 2, col - (_n_width + 1) / 2 - 1, (delta + 1) / 2);
-            cleanPage(rows, col + _n_width / 2, col + (_l_width + 1) / 2 - 1, (delta + 2) / 2);
+            cleanPage(rows, col - (_l_width + 1) / 2, col - (_n_width + 1) / 2);
+            cleanPage(rows, col + _n_width / 2, col + (_l_width + 1) / 2);
         }
     }
 
 }
 
-void ACROBOTIC_SSD1306::cleanPage(const uint8_t rows, const uint8_t s_width, uint8_t e_width, int8_t delta) {
-    setPageMode(SSD1306_Set_PageCols_Cmd, s_width, e_width);
-    for (uint16_t k = 0; k < rows * delta; k++) {
+void ACROBOTIC_SSD1306::cleanPage(const uint8_t rows, const uint8_t s_col, uint8_t e_col) {
+    setPageMode(SSD1306_Set_PageCols_Cmd, s_col, e_col);
+    for (uint16_t k = 0; k < (e_col - s_col + 1) * rows; k++) {
         sendData(0);
     }
 }

@@ -3,15 +3,17 @@
 
 #include <Arduino.h>
 
-#define TIMES 0
-#define DAY 1
-#define HOUR 2
-#define MIN 3
-#define SEC 4
-#define DEG_C 5
-#define PERCENT 6
-#define KPA 7
-#define CM 8
+#define MEASURE_NONE 0
+#define MEASURE_TIMES 1
+#define MEASURE_DAY 2
+#define MEASURE_HOUR 3
+#define MEASURE_MIN 4
+#define MEASURE_SEC 5
+#define MEASURE_DEG_C 6
+#define MEASURE_PERCENT 7
+#define MEASURE_KPA 8
+#define MEASURE_CM 9
+#define MEASURE_AMPER 10
 
 
 extern const char* MEASURES[];

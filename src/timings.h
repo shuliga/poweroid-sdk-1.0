@@ -58,13 +58,13 @@ typedef struct TimingState {
 
     /**
      *
-     * Defines if time has passed since trigger was set to true.<br/>
-     * As soon as trigger is false, the result is reset to false as well
+     * Defines if time has passed since <code>state_on</code> was set to true.<br/>
+     * As soon as <code>state_on</code> is false, the result is reset to false as well.
      *
-     * @param trigger
+     * @param state_on
      * @return true if time has passed
      */
-    bool isTimeAfter(bool trigger);
+    bool isTimeAfter(bool state_on);
 
     /**
      *

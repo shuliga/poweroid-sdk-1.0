@@ -12,6 +12,7 @@ Cu cu{
                   "get_dht",
                   "get_state_",
                   "disarm_state_",
+                  "set_flags",
 #ifdef ALLOW_TOKEN
                   "set_token",
                   "pass_token",

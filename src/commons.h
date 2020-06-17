@@ -5,6 +5,13 @@
 #ifndef COMMONS_H
 #define COMMONS_H
 
+#if defined(__AVR_ATmega1284__) || defined(__AVR_ATmega1284P__)
+#define SERIAL_TX_BUFFER_SIZE 128
+#define SERIAL_RX_BUFFER_SIZE 128
+#else
+#define SERIAL_TX_BUFFER_SIZE 96
+#endif
+
 #include <Arduino.h>
 #include "boards.h"
 #include "global.h"
