@@ -38,6 +38,26 @@ const unsigned char ttable[6][4] = {
   // R_CCW_BEGIN_M
   {R_START_M,            R_CCW_BEGIN_M,  R_START_M,    R_START | DIR_CCW},
 };
+#elif defined(EMULATE_ROTARY)
+
+#define B_CW_BEGIN 0x1
+#define B_CW_NEXT 0x2
+#define B_CCW_BEGIN 0x3
+#define B_CCW_NEXT 0x4
+
+const unsigned char ttable[5][4] = {
+        // R_START
+        {R_START,    B_CW_BEGIN,  B_CCW_BEGIN, R_START},
+        // B_CW_BEGIN
+        {B_CW_BEGIN,  B_CW_NEXT | DIR_CW,  B_CW_BEGIN, B_CW_NEXT | DIR_CW},
+        // B_CW_NEXT
+        {R_START,  B_CW_NEXT,  R_START,  B_CW_NEXT},
+        // R_CCW_BEGIN
+        {B_CCW_BEGIN, B_CCW_NEXT| DIR_CCW, B_CCW_BEGIN, B_CCW_NEXT| DIR_CCW},
+        // B_CCW_NEXT
+        {R_START, B_CCW_NEXT, R_START, B_CCW_NEXT},
+};
+
 #else
 // Use the full-step state table (emits a code at 00 only)
 #define R_CW_FINAL 0x1
