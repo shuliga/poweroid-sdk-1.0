@@ -21,8 +21,8 @@
 
 
 //Encoder pins
-#define ENC2_PIN 2
-#define ENC1_PIN 3
+#define ENC1_PIN 2
+#define ENC2_PIN 3
 #define ENC_BTN_PIN 4
 
 //Discrete signal IN pins

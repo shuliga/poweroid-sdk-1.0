@@ -20,24 +20,24 @@
 //#define DEBUG
 #define WATCH_DOG
 
-#define FLAG_RELAY_ON_LOW       1
-#define FLAG_REMOTE_ENABLE      2
-#define FLAG_REMOTE_SERVER      3
-#define FLAG_TOKEN_ENABLE       4
-#define FLAG_LOW_SPEED          5
-#define FLAG_REF_1V1            6
+#define FLAG_RELAY_ON_LOW       0
+#define FLAG_REMOTE_ENABLE      1
+#define FLAG_REMOTE_SERVER      2
+#define FLAG_TOKEN_ENABLE       3
+#define FLAG_LOW_SPEED          4
+#define FLAG_REF_1V1            5
 
 #define FLAGS_MAX 63
-#define TOKEN_MAX 8
+#define TOKEN_MAX 9
 
-#define ExtractFlag(flag)   (PWR_FLAGS >> ((flag) - 1) & 1U)
+#define ExtractFlag(flag)   (PWR_FLAGS >> (flag) & 1U)
 
 #define RELAY_ON_LOW        ExtractFlag(FLAG_RELAY_ON_LOW)
 #define REMOTE_ENABLE       ExtractFlag(FLAG_REMOTE_ENABLE)
 #define REMOTE_SERVER       ExtractFlag(FLAG_REMOTE_SERVER)
 #define TOKEN_ENABLE        ExtractFlag(FLAG_TOKEN_ENABLE)
 #define LOW_SPEED           ExtractFlag(FLAG_LOW_SPEED)
-#define REF_1V1             ExtractFlag(FLAG_REF_1V1)
+#define REF_1V1           ExtractFlag(FLAG_REF_1V1)
 
 #define DEBOUNCE_DELAY 500L
 #define SERIAL_READ_TIMEOUT 150
@@ -55,7 +55,7 @@
 extern SoftwareSerial SSerial;
 #endif
 
-#ifdef DEBUG
+#ifdef DEBUG_SS
 #define SSERIAL
 #define NO_CONTROLLER
 #endif

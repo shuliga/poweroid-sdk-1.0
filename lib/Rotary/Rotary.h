@@ -24,11 +24,6 @@
 class Rotary
 {
   public:
-    Rotary() {
-        pin1 = 2;
-        pin2 = 3;
-    };
-
     Rotary(char, char);
     unsigned char process();
 
