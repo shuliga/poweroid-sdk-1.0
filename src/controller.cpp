@@ -75,6 +75,11 @@ void Controller::begin() {
     props_idx_max = ctx->props_size - 1;
     state_idx_max = state_count - 1;
 #endif
+
+#ifdef DEBUG
+    Serial.println("CONTROLLER passed");
+#endif
+
 }
 
 void Controller::initEncoderInterrupts() {
@@ -119,7 +124,6 @@ void Controller::outputHeader(bool relays) const {
 }
 
 void Controller::outputBuffCentered() {
-//    padLineCenteredInBuff();
     oled.outputTextXY(DISPLAY_BASE + 2, DISPLAY_CENTER_COL, BUFF, true, dither);
 }
 
@@ -659,19 +663,19 @@ ISR(PCVECT) {
                 case TOKEN:
                 case DATE_TIME:
                 case EDIT_PROP: {
-                    input == DIR_CW ? DECR(prop_value, prop_min) : INCR(prop_value, prop_max);
+                    input == DIR_CW ? INCR(prop_value, prop_max) : DECR(prop_value, prop_min);
                     break;
                 }
 
                 case BROWSE: {
                     if (enablePropControl) {
-                        input == DIR_CW ? DECR(prop_idx, 0) : INCR(prop_idx, props_idx_max);
+                        input == DIR_CW ? INCR(prop_idx, props_idx_max) : DECR(prop_idx, 0);
                     }
                     break;
                 }
 
                 case STATES: {
-                    input == DIR_CW ? DECR(state_idx, 0) : INCR(state_idx, state_idx_max);
+                    input == DIR_CW ? INCR(state_idx, state_idx_max) : DECR(state_idx, 0);
                     break;
                 }
 

@@ -56,6 +56,7 @@ void setTimerFlags() {
     }
 }
 
+#ifdef DATETIME_H
 void setDaylight(){
     sec = RTC.get(DS1307_SEC, true);
     min = sec == 0 ? RTC.get(DS1307_MIN, false) : min;
@@ -68,6 +69,7 @@ void setDaylight(){
     double hrs_float = hrs + min / 60.0 + sec / 3600.0;
     DAYLIGHT = hrs_float >= NOON_HOUR - (ha / 15) && hrs_float <= NOON_HOUR + (ha / 15);
 }
+#endif
 
 void setFlashCounters() {
     if (test_timer(TIMER_1HZ)) {
@@ -94,6 +96,7 @@ void Pwr::begin() {
 
 #ifdef WATCH_DOG
     wdt_disable();
+    wdt_enable(WDTO_8S);
 #endif
 
     I2c.begin();
@@ -116,31 +119,31 @@ void Pwr::begin() {
 
     printVersion();
 
-#ifdef WATCH_DOG
-    wdt_enable(WDTO_8S);
-#endif
-
     SENS->initSensors();
 
     loadDisarmedStates();
 
-    REL->mapped = !CTX->passive;
+    REL->mapped = !CTX->passive && !TOKEN_ENABLE;
 
 #ifdef DEBUG
     writeLog('I', "PWR", 200 + CTX->passive, (unsigned long)0);
-#endif
-
-#ifdef WATCH_DOG
-    wdt_enable(WDTO_2S);
 #endif
 
 #ifndef NO_CONTROLLER
     CTRL->begin();
 #endif
 
+#ifdef WATCH_DOG
+    wdt_enable(WDTO_2S);
+#endif
+
     Serial.setTimeout(SERIAL_READ_TIMEOUT);
 
     initTimer_1();
+
+#ifdef DEBUG
+    Serial.println("INIT PASSED");
+#endif
 }
 
 void Pwr::run() {

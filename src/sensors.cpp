@@ -7,6 +7,7 @@
 #include "commands.h"
 #include <DHT/DHT.h>
 #include <stdint.h>
+#include <HardwareSerial.h>
 
 // Console output codes
 // 100 -
@@ -88,6 +89,11 @@ void Sensors::initSensors() {
     }
     delay(1000L);
     searchDHT();
+
+#ifdef DEBUG
+    Serial.println("SENSORS passed");
+#endif
+
 }
 
 void Sensors::process() {
