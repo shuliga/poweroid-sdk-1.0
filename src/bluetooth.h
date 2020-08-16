@@ -3,10 +3,6 @@
 
 #include "context.h"
 
-#ifdef SSERIAL
-#include <SoftwareSerial.h>
-#endif
-
 #define HC_05_AT_BAUD 38400
 #define HC_05_AT_BAUD_FAST 57600
 #define HC_05_AT_UART "AT+UART="
