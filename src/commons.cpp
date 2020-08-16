@@ -5,8 +5,7 @@
 #endif
 
 #ifdef SSERIAL
-#include <SoftwareSerial.h>
-SoftwareSerial SSerial = SoftwareSerial(RX_SS, TX_SS);
+AltSoftSerial SSerial = AltSoftSerial();
 #endif
 
 unsigned long hash(byte *data, unsigned long size) {
