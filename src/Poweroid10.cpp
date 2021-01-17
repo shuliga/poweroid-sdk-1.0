@@ -115,6 +115,8 @@ void Pwr::begin() {
 #ifdef SSERIAL
     SSerial.begin(DEFAULT_BAUD);
     SSerial.println("SSerial-started");
+#else
+    initTimer_1();
 #endif
 
     printVersion();
@@ -139,8 +141,6 @@ void Pwr::begin() {
 
     Serial.setTimeout(SERIAL_READ_TIMEOUT);
 
-    initTimer_1();
-
 #ifdef DEBUG
     Serial.println("INIT PASSED");
 #endif
@@ -164,7 +164,9 @@ void Pwr::run() {
 
     processSensors();
 
+#ifndef NO_COMMANDER
     CMD->listen();
+#endif
 
     if (BT && CTX->remoteMode) {
         newConnected = CMD->isConnected();
@@ -220,10 +222,12 @@ void Pwr::initPins() {
     pinMode(LED_PIN, OUTPUT);
 #endif
 
+#ifndef SSERIAL
     for (uint8_t i = 0; i < REL->size(); i++) {
         pinMode(OUT_PINS[i], OUTPUT);
     }
     REL->shutDown();
+#endif
 
     for (uint8_t i = 0; i < SENS->size(); i++) {
         pinMode(IN_PINS[i], INPUT_PULLUP);
@@ -263,7 +267,9 @@ void Pwr::processChangedStates() {
     }
 }
 
+#ifndef SSERIAL
 ISR(TIMER1_COMPA_vect) {
     timerCounter++;
     timerCounter = timerCounter > TIMER_COUNTER_MAX ? 0 : timerCounter;
 }
+#endif

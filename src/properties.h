@@ -14,6 +14,7 @@
 #define MEASURE_KPA 8
 #define MEASURE_CM 9
 #define MEASURE_AMPER 10
+#define MEASURE_BAUD 11
 
 
 extern const char* MEASURES[];
