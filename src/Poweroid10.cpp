@@ -208,6 +208,11 @@ void Pwr::run() {
 
     timerFlags = 0;
     CTX->propsUpdated = false;
+
+#ifndef NO_CONTROLLER
+    CTRL->setIndicators(INDICATORS.DATA);
+#endif
+
 }
 
 void Pwr::printVersion() {

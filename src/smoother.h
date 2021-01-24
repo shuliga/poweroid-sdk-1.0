@@ -2,8 +2,8 @@
 // Created by SHL on 20.05.2020.
 //
 
-#ifndef PUMP_STATION_3X2_UNO_PRO_SMOOTHER_H
-#define PUMP_STATION_3X2_UNO_PRO_SMOOTHER_H
+#ifndef SMOOTHER_H
+#define SMOOTHER_H
 
 #include <Arduino.h>
 
@@ -26,4 +26,4 @@ private:
 
 };
 
-#endif //PUMP_STATION_3X2_UNO_PRO_SMOOTHER_H
+#endif //SMOOTHER_H

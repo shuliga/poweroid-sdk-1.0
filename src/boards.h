@@ -33,9 +33,14 @@
 #endif  //MINI
 
 //Relay pins
+#ifndef PWR1_PIN
 #define PWR1_PIN 8
+#endif
+
 #ifndef MINI
+#ifndef PWR2_PIN
 #define PWR2_PIN 9
+#endif
 #endif  //MINI
 
 #undef FACTORY_RESET_PIN

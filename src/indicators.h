@@ -19,11 +19,14 @@
 class Indicators{
 public:
 
-    static const uint8_t INDICATOR_PINS[];
+    uint8_t DATA = 0;
 
     void init();
     void set(uint8_t i, bool on);
     void flash(uint8_t i, bool flash, bool trigger);
+private:
+    static const uint8_t INDICATOR_PINS[];
+
 };
 
 extern Indicators INDICATORS;

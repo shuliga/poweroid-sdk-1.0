@@ -9,6 +9,13 @@
 #define BUFF_SIZE 65
 #define LINE_SIZE 16
 
+#ifdef MINI
+#define PWR_SIZE 2
+#else
+#define PWR_SIZE 3
+#endif
+
+
 #ifdef CONTROLLER_ONLY
 #define FLAGS_DEFAULT 2
 #endif
@@ -36,7 +43,7 @@ typedef union {
 } banner_data;
 
 typedef struct {
-    int8_t mode;
+    int8_t mode;  // BANNER MODE: 0 - SINGLE TEXT LINE; 1 - SINGLE GAUGE; 2 - DOUBLE GAUGES; 4 - DOUBLE GAUGES WITH TEXT LINES IN EXTRA BUFFER
     banner_data data;
 } banner;
 

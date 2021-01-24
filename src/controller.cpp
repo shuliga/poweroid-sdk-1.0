@@ -6,14 +6,15 @@
 #include <MultiClick/MultiClick.h>
 #include <Rotary/Rotary.h>
 #include <ACROBOTIC_SSD1306/ACROBOTIC_SSD1306.h>
+#include <I2C.h>
 #include "controller.h"
 #include "commands.h"
 
 #ifdef RTCM
-
 #include "datetime.h"
-
 #endif
+
+#define I2C_CONTROLLER_ADDR 0x25
 
 #define INCR(val, max) val < (max) ? (val)++ : val
 #define DECR(val, min) val > (min) ? (val)-- : val
@@ -65,16 +66,45 @@ Rotary encoder = Rotary(ENC1_PIN, ENC2_PIN);
 
 MultiClick encoderClick = MultiClick(ENC_BTN_PIN);
 
+void processEncoderInput(uint8_t input){
+    control_touched = true;
+    if (!requestForRefresh) {
+        switch (state) {
+
+            case FLAG:
+            case TOKEN:
+            case DATE_TIME:
+            case EDIT_PROP: {
+                input == DIR_CW ? INCR(prop_value, prop_max) : DECR(prop_value, prop_min);
+                break;
+            }
+
+            case BROWSE: {
+                if (enablePropControl) {
+                    input == DIR_CW ? INCR(prop_idx, props_idx_max) : DECR(prop_idx, 0);
+                }
+                break;
+            }
+
+            case STATES: {
+                input == DIR_CW ? INCR(state_idx, state_idx_max) : DECR(state_idx, 0);
+                break;
+            }
+
+        }
+    }
+
+}
 
 Controller::Controller(Context &_ctx, Commander &_cmd) : cmd(&_cmd), ctx(&_ctx) {}
 
 void Controller::begin() {
     initDisplay();
-#if defined(ENC1_PIN) && defined(ENC2_PIN)
+#if defined(ENC1_PIN) && defined(ENC2_PIN) && !defined(I2C_CONTROLLER)
     initEncoderInterrupts();
+#endif
     props_idx_max = ctx->props_size - 1;
     state_idx_max = state_count - 1;
-#endif
 
 #ifdef DEBUG
     Serial.println("CONTROLLER passed");
@@ -127,6 +157,11 @@ void Controller::outputBuffCentered() {
     oled.outputTextXY(DISPLAY_BASE + 2, DISPLAY_CENTER_COL, BUFF, true, dither);
 }
 
+void Controller::setIndicators(uint8_t data) {
+#ifdef I2C_CONTROLLER
+    I2c.write((uint8_t)I2C_CONTROLLER_ADDR, data);
+#endif
+}
 
 void Controller::process() {
 
@@ -135,6 +170,23 @@ void Controller::process() {
     oled.checkConnected();
 
     McEvent event = encoderClick.checkButton();
+
+#ifdef I2C_CONTROLLER
+
+    uint8_t ctrlBuff[2];
+    I2c.read(I2C_CONTROLLER_ADDR, 2, ctrlBuff);
+
+    uint8_t  inc_dec = ctrlBuff[0] & 0x03;
+    if (inc_dec > 0 ){
+        processEncoderInput(inc_dec == 2 ? DIR_CW : DIR_CCW);
+    }
+
+    for (uint8_t i = 0 ; i < PWR_SIZE; i++){
+        uint8_t butt = (ctrlBuff[1] >> (2 * i)) & 0x03;
+        BUTTONS[i] = butt == 1 ? CLICK : (butt == 2 ? DOUBLE_CLICK : butt == 3 ? HOLD : NOTHING);
+    }
+
+    #endif
 
     switch (state) {
 
@@ -649,42 +701,15 @@ void Controller::outputPropVal(uint8_t measure_idx, int16_t _prop_val, bool brac
     outputBuffCentered();
 }
 
-#ifdef ENC1_PIN
-#ifdef ENC2_PIN
+#if defined(ENC1_PIN) && defined(ENC2_PIN) && !defined(I2C_CONTROLLER)
 
 ISR(PCVECT) {
     unsigned char input = encoder.process();
     if (input != NOTHING) {
-        control_touched = true;
-        if (!requestForRefresh) {
-            switch (state) {
-
-                case FLAG:
-                case TOKEN:
-                case DATE_TIME:
-                case EDIT_PROP: {
-                    input == DIR_CW ? INCR(prop_value, prop_max) : DECR(prop_value, prop_min);
-                    break;
-                }
-
-                case BROWSE: {
-                    if (enablePropControl) {
-                        input == DIR_CW ? INCR(prop_idx, props_idx_max) : DECR(prop_idx, 0);
-                    }
-                    break;
-                }
-
-                case STATES: {
-                    input == DIR_CW ? INCR(state_idx, state_idx_max) : DECR(state_idx, 0);
-                    break;
-                }
-
-            }
-        }
+        processEncoder(input);
     }
 }
 
-#endif
 #endif
 
 #endif // NO_CONTROLLER
