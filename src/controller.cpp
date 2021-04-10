@@ -34,6 +34,7 @@ static TimingState sleep_timer = TimingState(100000L);
 static TimingState autoComplete_timer = TimingState(6000L);
 
 static volatile bool control_touched = false;
+static volatile bool wake_up = false;
 static volatile uint8_t prop_idx = 0;
 static volatile uint8_t state_idx = 0;
 static volatile long prop_value;
@@ -68,6 +69,7 @@ MultiClick encoderClick = MultiClick(ENC_BTN_PIN);
 
 void processEncoderInput(uint8_t input){
     control_touched = true;
+    wake_up = true;
     if (!requestForRefresh) {
         switch (state) {
 
@@ -183,7 +185,10 @@ void Controller::process() {
 
     for (uint8_t i = 0 ; i < PWR_SIZE; i++){
         uint8_t butt = (ctrlBuff[1] >> (2 * i)) & 0x03;
-        BUTTONS[i] = butt == 1 ? CLICK : (butt == 2 ? DOUBLE_CLICK : butt == 3 ? HOLD : NOTHING);
+        if (state != SUSPEND){
+            BUTTONS[i] = butt == 1 ? CLICK : (butt == 2 ? DOUBLE_CLICK : butt == 3 ? HOLD : NOTHING);
+        }
+        wake_up = wake_up | butt > 0;
     }
 
     #endif
@@ -520,8 +525,8 @@ void Controller::process() {
                 oled.displayOff();
             }
 
-            if (event == CLICK || control_touched) {
-                control_touched = false;
+            if (event == CLICK || wake_up) {
+                wake_up = false;
                 oled.displayOn();
                 state = SLEEP;
             };
