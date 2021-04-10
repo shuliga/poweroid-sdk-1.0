@@ -20,12 +20,12 @@
 //#define DEBUG
 #define WATCH_DOG
 
-#define FLAG_RELAY_ON_LOW       0
-#define FLAG_REMOTE_ENABLE      1
-#define FLAG_REMOTE_SERVER      2
-#define FLAG_TOKEN_ENABLE       3
-#define FLAG_LOW_SPEED          4
-#define FLAG_REF_1V1            5
+#define FLAG_RELAY_ON_LOW       0U
+#define FLAG_REMOTE_ENABLE      1U
+#define FLAG_REMOTE_SERVER      2U
+#define FLAG_TOKEN_ENABLE       3U
+#define FLAG_LOW_SPEED          4U
+#define FLAG_REF_1V1            5U
 
 #define FLAGS_MAX 63
 #define TOKEN_MAX 9
@@ -56,7 +56,8 @@
 #define CHAR_DISCONNECTED   129
 
 #ifdef SSERIAL
-extern SoftwareSerial SSerial;
+#include <AltSoftSerial/AltSoftSerial.h>
+extern AltSoftSerial SSerial;
 #endif
 
 #ifdef DEBUG_SS

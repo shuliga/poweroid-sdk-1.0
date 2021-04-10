@@ -9,12 +9,15 @@
 
 static const int ONE_LINE = 16;
 
+#include <MultiClick.h>
 #include "commons.h"
 #include "context.h"
 #include "commander.h"
 
 class Controller {
 public:
+
+    McEvent BUTTONS[PWR_SIZE];
 
     Controller(Context &_ctx, Commander &_cmd);
 
@@ -23,6 +26,8 @@ public:
     void process();
 
     void adjustBrightness();
+
+    static void setIndicators(uint8_t data);
 
 private:
     Context *ctx;
@@ -67,6 +72,7 @@ private:
     static uint8_t normalizeGauge(uint16_t val, uint16_t min, uint16_t max);
 
     static void outputBuffCentered();
+
 };
 
 

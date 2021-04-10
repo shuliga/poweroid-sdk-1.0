@@ -90,7 +90,7 @@ bool Relays::isPowered(uint8_t idx){
 char * Relays::printRelay(uint8_t idx)
 {
     sprintf(BUFF, REL_FMT, idx, powered[idx]);
-#ifdef SSERIAL
+#if defined(SSERIAL) and defined(DEBUG)
     SSerial.println(BUFF);
     SSerial.flush();
 #endif

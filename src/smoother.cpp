@@ -3,6 +3,8 @@
 //
 
 #include "smoother.h"
+#define INT16_MAX 0x7fffL
+#define INT16_MIN (-INT16_MAX - 1L)
 
 void Smoother::feed(int16_t val) {
     shift();

@@ -152,7 +152,7 @@ const char *Sensors::printSensor(uint8_t i) {
 
 
 const int16_t Sensors::getNormalizedSensor(uint8_t i, int16_t min, int16_t max, uint16_t raw_min, uint16_t  raw_max) {
-    int16_t raw_val = getSensorVal(i) - raw_min ;
+    int16_t raw_val = getSensorVal(i) - raw_min;
     float ratio = static_cast<const float >(max - min) / (raw_max - raw_min);
     return static_cast<const int16_t>((raw_val < 0.0 ? 0.0 : raw_val) * ratio + min);
 }
