@@ -92,6 +92,4 @@
 
 #endif // PWR20
 
-
-
 #endif //BOARDS_H
