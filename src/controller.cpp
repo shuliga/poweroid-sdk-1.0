@@ -67,7 +67,7 @@ Rotary encoder = Rotary(ENC1_PIN, ENC2_PIN);
 
 MultiClick encoderClick = MultiClick(ENC_BTN_PIN);
 
-void processEncoderInput(uint8_t input){
+void processEncoder(uint8_t input){
     control_touched = true;
     wake_up = true;
     if (!requestForRefresh) {
@@ -111,7 +111,6 @@ void Controller::begin() {
 #ifdef DEBUG
     Serial.println("CONTROLLER passed");
 #endif
-
 }
 
 void Controller::initEncoderInterrupts() {
