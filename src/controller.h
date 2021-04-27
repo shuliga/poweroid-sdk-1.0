@@ -9,7 +9,7 @@
 
 static const int ONE_LINE = 16;
 
-#include <MultiClick.h>
+#include <MultiClick/MultiClick.h>
 #include "commons.h"
 #include "context.h"
 #include "commander.h"

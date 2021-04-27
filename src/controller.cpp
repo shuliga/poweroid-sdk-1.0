@@ -220,6 +220,7 @@ void Controller::process() {
             }
 
             if (event == HOLD) {
+                ctx->propsUpdated = true;
                 state = STORE;
             }
             break;

@@ -49,6 +49,7 @@ void Bt::begin() {
 //            }
         }
         remote_on = true;
+        delay(100);
         Serial.end();
         Serial.begin(HIGH_SPEED_BAUD);
     } else {

@@ -55,22 +55,18 @@ public:
     const char *printDht();
 
     void setDHT(int8_t _temp, uint8_t _humid);
-
+    void setTempCorrection(int8_t correction);
+    void setHumidCorrection(int8_t correction);
     const char *printSensor(uint8_t i);
-
     const int16_t getNormalizedSensor(uint8_t i, int16_t min, int16_t max, uint16_t raw_min = 0, uint16_t  raw_max = MAX_ANALOG_VALUE);
-
     int8_t getInt(float f) const;
 
 private:
 
     float temp;
-
     float humid;
 
     void searchDHT();
-
-
     void updateDhtDirect();
 };
 

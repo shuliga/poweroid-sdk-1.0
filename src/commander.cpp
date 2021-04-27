@@ -241,7 +241,4 @@ const char *Commander::printState(uint8_t i) {
 void Commander::disarmStateCmd(uint8_t i, bool disarm) {
     disarmState(i, disarm);
     ctx->PERS.storeState(i, disarm);
-    if (ctx->canRespond()) {
-        Serial.println(printState(i));
-    }
 }

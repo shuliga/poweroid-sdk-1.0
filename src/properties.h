@@ -16,6 +16,7 @@
 #define MEASURE_AMPER 10
 #define MEASURE_BAUD 11
 
+#define GET_PROP_NORM(i) PROPS.FACTORY[(i)].runtime / PROPS.FACTORY[(i)].scale
 
 extern const char* MEASURES[];
 

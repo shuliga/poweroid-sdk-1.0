@@ -31,6 +31,9 @@ static bool installed[SENS_COUNT];
 
 static bool dht_installed;
 static DHT dht(DHT_PIN, DHTTYPE);
+static int8_t temp_correction = 0;
+static int8_t humid_correction = 0;
+
 
 
 void Sensors::searchDHT() {
@@ -57,8 +60,16 @@ void Sensors::updateDHT() {
 }
 
 void Sensors::updateDhtDirect(){
-    temp = dht.readTemperature();
-    humid = dht.readHumidity();
+    temp = dht.readTemperature() * (1.0 + temp_correction / 100.0);
+    humid = dht.readHumidity() * (1.0 + humid_correction / 100.0);
+}
+
+void Sensors::setTempCorrection(int8_t correction) {
+    temp_correction = correction;
+}
+
+void Sensors::setHumidCorrection(int8_t correction) {
+    humid_correction = correction;
 }
 
 float Sensors::getTemperature() const {

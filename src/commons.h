@@ -42,13 +42,6 @@
 #define DEBOUNCE_DELAY 500L
 #define SERIAL_READ_TIMEOUT 150
 
-#ifdef SSERIAL
-#include <AltSoftSerial.h>
-#endif
-
-#define RX_SS 8
-#define TX_SS 9
-
 #define REMOTE_CONTROL "ctrl"
 #define REMOTE_HOST "host"
 
@@ -58,6 +51,10 @@
 #ifdef SSERIAL
 #include <AltSoftSerial/AltSoftSerial.h>
 extern AltSoftSerial SSerial;
+
+#define RX_SS 8
+#define TX_SS 9
+
 #endif
 
 #ifdef DEBUG_SS

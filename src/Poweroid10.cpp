@@ -136,7 +136,7 @@ void Pwr::begin() {
 #endif
 
 #ifdef WATCH_DOG
-    wdt_enable(WDTO_2S);
+    wdt_enable(WDTO_4S);
 #endif
 
     Serial.setTimeout(SERIAL_READ_TIMEOUT);
@@ -266,7 +266,9 @@ void Pwr::power(uint8_t i, bool power) {
 void Pwr::processChangedStates() {
     for (uint8_t i = 0; i < state_count; i++) {
         if (changedState[i]) {
-            Serial.println(CMD->printState(i));
+            if (CTX->canRespond()) {
+                Serial.println(CMD->printState(i));
+            }
             changedState[i] = false;
         }
     }
