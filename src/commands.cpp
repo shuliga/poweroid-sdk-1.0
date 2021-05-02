@@ -28,9 +28,10 @@ Cu cu{
                   "remote_state ",
                   "get_all_prop",
 #ifndef SAVE_RAM
-                    "get_all_state",
-                    "get_all_sensor",
-                    "get_all_relay",
+                  "get_flags",
+                  "get_all_state",
+                  "get_all_sensor",
+                  "get_all_relay"
 #endif
     }
 };

@@ -204,14 +204,14 @@ void Pwr::run() {
         REL->shutDown();
     }
 
-    processChangedStates();
+#ifndef NO_CONTROLLER
+    CTRL->setIndicators(INDICATORS.DATA);
+#endif
 
     timerFlags = 0;
     CTX->propsUpdated = false;
 
-#ifndef NO_CONTROLLER
-    CTRL->setIndicators(INDICATORS.DATA);
-#endif
+    processChangedStates();
 
 }
 

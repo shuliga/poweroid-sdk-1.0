@@ -172,6 +172,12 @@ void Commander::listen() {
                 }
 
 #ifndef SAVE_RAM
+                if (cmd.startsWith(cu.cmd_str.CMD_GET_FLAGS)) {
+                    char bin[9];
+                    itoa(PWR_FLAGS, bin, 2);
+                    printCmdResponse(cmd, bin);
+                }
+
                 if (cmd.startsWith(cu.cmd_str.CMD_GET_ALL_STATE)) {
                     for (uint8_t i = 0; i < state_count; i++) {
                         printCmdResponse(cmd, printState(i));

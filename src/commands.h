@@ -28,6 +28,7 @@ typedef struct CommandsStr {
     const char* CMD_REMOTE_STATE;
     const char* CMD_GET_ALL_PROP;
 #ifndef SAVE_RAM
+    const char* CMD_GET_FLAGS;
     const char* CMD_GET_ALL_STATE;
     const char* CMD_GET_ALL_SENSOR;
     const char* CMD_GET_ALL_RELAY;
