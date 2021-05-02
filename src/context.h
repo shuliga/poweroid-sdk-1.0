@@ -9,15 +9,6 @@
 #include "relays.h"
 #include "persistence.h"
 
-typedef struct RunState {
-    RunState() = default;
-
-    uint8_t idx;
-    char *name;
-    char *state;
-
-};
-
 extern const uint8_t state_count;
 extern bool changedState[];
 
