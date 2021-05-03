@@ -3,6 +3,7 @@
 #include "context.h"
 #include "commands.h"
 #include "commander.h"
+#include "states.h"
 
 static const char *ORIGIN = "CMD";
 const char *STATE_FORMAT_BUFF = "[%i] State %s: %s";
@@ -102,6 +103,7 @@ void Commander::listen() {
                     if ( valIndex > 1){
                         PWR_FLAGS = cmd.substring(getValIndex()).toInt();
                         ctx->PERS.storeFlags();
+                        printCmdResponse(cmd, NULL);
                     }
                 }
 
@@ -237,7 +239,7 @@ bool Commander::isConnected() {
 
 const char *Commander::printState(uint8_t i) {
     if (ctx->canRespond()){
-        sprintf(BUFF, STATE_FORMAT_BUFF, i, getState(i)->name, getState(i)->state);
+        sprintf(BUFF, STATE_FORMAT_BUFF, i, run_states[i]->name, run_states[i]->getState());
         return BUFF;
     } else {
         return NULL;
@@ -245,6 +247,6 @@ const char *Commander::printState(uint8_t i) {
 }
 
 void Commander::disarmStateCmd(uint8_t i, bool disarm) {
-    disarmState(i, disarm);
+    run_states[i]->disarm(disarm);
     ctx->PERS.storeState(i, disarm);
 }

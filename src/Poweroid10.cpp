@@ -1,4 +1,5 @@
 #include "Poweroid10.h"
+#include "states.h"
 #include <avr/wdt.h>
 #include <I2C/I2C.h>
 
@@ -136,7 +137,7 @@ void Pwr::begin() {
 #endif
 
 #ifdef WATCH_DOG
-    wdt_enable(WDTO_4S);
+    wdt_enable(WDTO_2S);
 #endif
 
     Serial.setTimeout(SERIAL_READ_TIMEOUT);
@@ -246,7 +247,7 @@ void Pwr::initPins() {
 void Pwr::loadDisarmedStates() {
     for (uint8_t i = 0; i < state_count; i++) {
         bool disarm = CTX->PERS.loadState(i);
-        disarmState(i, disarm);
+        run_states[i]->disarm(disarm);
 #ifdef DEBUG
         if (disarm) {
             Serial.println(printState(i));
@@ -265,11 +266,11 @@ void Pwr::power(uint8_t i, bool power) {
 
 void Pwr::processChangedStates() {
     for (uint8_t i = 0; i < state_count; i++) {
-        if (changedState[i]) {
+        if (run_states[i]->changed) {
             if (CTX->canRespond()) {
                 Serial.println(CMD->printState(i));
             }
-            changedState[i] = false;
+            run_states[i]->changed = false;
         }
     }
 }

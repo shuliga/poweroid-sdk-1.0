@@ -9,6 +9,7 @@
 #include <I2C.h>
 #include "controller.h"
 #include "commands.h"
+#include "states.h"
 
 #ifdef RTCM
 #include "datetime.h"
@@ -256,16 +257,16 @@ void Controller::process() {
 
         case STATES: {
             if (testControl(sleep_timer) || c_state_idx != state_idx) {
-                strcpy(BUFF, getState(state_idx)->name);
+                strcpy(BUFF, run_states[state_idx]->name);
                 outputPropDescr(BUFF);
-                strcpy(BUFF, getState(state_idx)->state);
+                strcpy(BUFF, run_states[state_idx]->getState());
                 outputBuffCentered();
                 outputStatus(F("State:"), state_idx);
                 c_state_idx = state_idx;
             }
 
             if (event == HOLD) {
-                cmd->disarmStateCmd(state_idx, !isDisarmedState(state_idx));
+                cmd->disarmStateCmd(state_idx, !run_states[state_idx]->isDisarmed());
                 c_state_idx = -1;
             }
 
