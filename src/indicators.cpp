@@ -32,8 +32,8 @@ void Indicators::set(uint8_t i, bool on) {
 #endif
 }
 
-void Indicators::flash(uint8_t i, bool flash, bool trigger) {
-    set(i, trigger ? (flash ? HIGH : LOW) : LOW);
+void Indicators::flash(uint8_t i, bool flash, bool enable) {
+    set(i, enable ? (flash ? HIGH : LOW) : LOW);
 }
 
 #endif

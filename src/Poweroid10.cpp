@@ -202,7 +202,7 @@ void Pwr::run() {
     if (BT && CTX->remoteMode) {
         newConnected = CMD->isConnected();
         updateConnected = newConnected != CTX->connected;
-        CTX->refreshState = CTX->refreshState || updateConnected;
+        CTX->systemStatusChanged = CTX->systemStatusChanged || updateConnected;
         CTX->connected = newConnected;
     }
 
@@ -294,12 +294,12 @@ void Pwr::loadDisarmedStates() {
         }
 #endif
     }
-    CTX->refreshState = true;
+    CTX->systemStatusChanged = true;
 }
 
 void Pwr::power(uint8_t i, bool power) {
     if (CTX->canAccessLocally()) {
-        CTX->refreshState = CTX->refreshState || (REL->isPowered(i) != power);
+        CTX->systemStatusChanged = CTX->systemStatusChanged || (REL->isPowered(i) != power);
         REL->power(i, power);
     }
 }

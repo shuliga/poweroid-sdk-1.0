@@ -37,7 +37,7 @@ typedef struct Context {
     bool hasToken;
     bool refreshProps;
     bool propsUpdated;
-    bool refreshState;
+    bool systemStatusChanged;
     bool passive;
     bool connected = false;
     bool remoteMode = false;

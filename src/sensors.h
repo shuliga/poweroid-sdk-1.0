@@ -42,7 +42,7 @@ public:
 
     void setInstalled();
 
-    bool isDhtInstalled();
+    bool isDhtOperating();
 
     bool isSensorOn(uint8_t index);
 
@@ -55,6 +55,7 @@ public:
     const char *printDht();
 
     void setDHT(int8_t _temp, uint8_t _humid);
+
     void setTempCorrection(int8_t correction);
     void setHumidCorrection(int8_t correction);
     const char *printSensor(uint8_t i);
@@ -68,6 +69,7 @@ private:
 
     void searchDHT();
     void updateDhtDirect();
+
 };
 
 

@@ -30,25 +30,18 @@ static const uint8_t  SENS_COUNT = ARRAY_SIZE(IN_PINS);
 static bool installed[SENS_COUNT];
 
 static bool dht_installed;
+static bool dht_operating;
 static DHT dht(DHT_PIN, DHTTYPE);
 static int8_t temp_correction = 0;
 static int8_t humid_correction = 0;
 
-
-
 void Sensors::searchDHT() {
     dht.begin();
-    float val = dht.readHumidity();
-    if (!isnan(val)) {
+    updateDhtDirect();
+    if (dht_operating) {
 #ifdef DEBUG
         writeLog('I', ORIGIN, 200, DHT_PIN);
 #endif
-        for(int i = 0; i < SENS_COUNT; i++){
-            if (IN_PINS[i] == DHT_PIN){
-                installed[i] = true;
-                updateDhtDirect();
-            }
-        }
         dht_installed = true;
     } else {
 #ifdef DEBUG
@@ -67,8 +60,12 @@ void Sensors::updateDHT() {
 }
 
 void Sensors::updateDhtDirect(){
-    temp = dht.readTemperature() * (1.0 + temp_correction / 100.0);
-    humid = dht.readHumidity() * (1.0 + humid_correction / 100.0);
+    humid = dht.readHumidity();
+    dht_operating = !isnan(humid);
+    if (dht_operating) {
+        humid = humid * (1.0 + humid_correction / 100.0);
+        temp = dht.readTemperature() * (1.0 + temp_correction / 100.0);
+    }
 }
 
 void Sensors::setTempCorrection(int8_t correction) {
@@ -121,21 +118,21 @@ void Sensors::initSensors() {
 }
 
 void Sensors::process() {
-//    setInstalled();
+    setInstalled();
     updateDHT();
 }
 
 void Sensors::setInstalled() {
     for (uint8_t i = 0; i < SENS_COUNT; i++) {
-        installed[i] = checkInstalled(IN_PINS[i], installed[i]);
+        installed[i] = true; // checkInstalled(IN_PINS[i], installed[i]);
 #ifdef DEBUG
         writeLog('I', ORIGIN, installed[i] ? 201 : 501, i);
 #endif
     }
 }
 
-bool Sensors::isDhtInstalled() {
-    return dht_installed;
+bool Sensors::isDhtOperating() {
+    return dht_operating;
 }
 
 bool Sensors::isSensorOn(uint8_t index) {
@@ -159,7 +156,7 @@ uint8_t Sensors::size() {
 }
 
 const char *Sensors::printDht() {
-    if (dht_installed ) {
+    if (dht_operating) {
         sprintf(BUFF, "%i~C %i%%", getInt(temp), getInt(humid));
     } else {
         noInfoToBuff();

@@ -23,7 +23,7 @@ public:
 
     void init();
     void set(uint8_t i, bool on);
-    void flash(uint8_t i, bool flash, bool trigger);
+    void flash(uint8_t i, bool flash, bool enable);
 private:
     static const uint8_t INDICATOR_PINS[];
 

@@ -235,7 +235,7 @@ void Controller::process() {
         case BROWSE: {
             bool prop_id_changed = c_prop_idx != prop_idx;
 
-            if (testControl(sleep_timer) || prop_id_changed || ctx->refreshProps || ctx->refreshState) {
+            if (testControl(sleep_timer) || prop_id_changed || ctx->refreshProps || ctx->systemStatusChanged) {
                 outputHeader(true);
                 if (loadProperty(prop_idx)) {
                     outputPropDescr(BUFF);
@@ -539,13 +539,13 @@ void Controller::process() {
             break;
         }
     }
-    if (ctx->refreshState) {
+    if (ctx->systemStatusChanged) {
         if (state == SUSPEND || state == SLEEP) {
             state = SLEEP;
         } else {
             outputHeader(true);
         }
-        ctx->refreshState = false;
+        ctx->systemStatusChanged = false;
     }
     ctx->refreshProps = false;
 

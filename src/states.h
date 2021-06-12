@@ -30,7 +30,7 @@ public:
     const char* getState();
     bool wasChanged();
     void gotoState(T newState);
-    bool firstState(T newState);
+    T* firstEntry();
     T state;
     T prev_state;
 protected:
@@ -48,16 +48,17 @@ void StateHolder<T>::gotoState(T newState) {
 }
 
 template<class T>
-bool StateHolder<T>::firstState(T newState) {
-    if (prev_state != newState) {
-        prev_state = newState;
+T* StateHolder<T>::firstEntry() {
+    T* result = 0;
+    if (prev_state != state) {
+        result = &prev_state;
+        prev_state = state;
         changed = true;
     } else {
         changed = false;
     }
-    return changed;
+    return result;
 }
-
 template<class T>
 bool StateHolder<T>::isDisarmed() {
     return state == disarmed_state;
