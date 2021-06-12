@@ -24,6 +24,8 @@ int8_t day = 1;
 int8_t month = 1;
 #endif //DATETIME_H
 
+#define ORIGIN_BEGIN "BEGIN"
+#define ORIGIN_RUN "RUN"
 
 volatile uint8_t timerCounter = 0;
 uint8_t pastTimerCounter = 0;
@@ -104,14 +106,25 @@ void Pwr::begin() {
     I2c.setSpeed(true);
 
     Serial.begin(DEFAULT_BAUD);
-
+#ifdef DEBUG
+    writeLog('D', ORIGIN_BEGIN, 200, "Started");
+#endif
     CTX->PERS.begin();
+#ifdef DEBUG
+    writeLog('D', ORIGIN_BEGIN, 200, "Persistence");
+#endif
+
+    printVersion();
 
     BT->begin();
+
     CTX->passive = !BT->host;
     CTX->remoteMode = BT->remote_on;
 
     initPins();
+#ifdef DEBUG
+    writeLog('D', ORIGIN_BEGIN, 200, "Pins");
+#endif
 
 #ifdef SSERIAL
     SSerial.begin(DEFAULT_BAUD);
@@ -120,9 +133,10 @@ void Pwr::begin() {
     initTimer_1();
 #endif
 
-    printVersion();
-
     SENS->initSensors();
+#ifdef DEBUG
+    writeLog('D', ORIGIN_BEGIN, 200, "Sensors");
+#endif
 
     loadDisarmedStates();
 
@@ -132,19 +146,27 @@ void Pwr::begin() {
     writeLog('I', "PWR", 200 + CTX->passive, (unsigned long)0);
 #endif
 
+#ifdef DEBUG
+    writeLog('D', ORIGIN_BEGIN, 200, "States");
+#endif
 #ifndef NO_CONTROLLER
     CTRL->begin();
+#ifdef DEBUG
+    writeLog('D', ORIGIN_BEGIN, 200, "Controller");
 #endif
-
-#ifdef WATCH_DOG
-    wdt_enable(WDTO_2S);
 #endif
 
     Serial.setTimeout(SERIAL_READ_TIMEOUT);
 
 #ifdef DEBUG
-    Serial.println("INIT PASSED");
+    writeLog('D', ORIGIN_BEGIN, 200, "Finish");
 #endif
+
+#ifdef WATCH_DOG
+    wdt_reset();
+    wdt_enable(WDTO_2S);
+#endif
+
 }
 
 void Pwr::run() {
@@ -154,10 +176,6 @@ void Pwr::run() {
 
     applyTimings();
 
-#ifdef WATCH_DOG
-    wdt_reset();
-#endif
-
     bool newConnected = false;
     bool updateConnected = false;
 
@@ -165,8 +183,20 @@ void Pwr::run() {
 
     processSensors();
 
-#ifndef NO_COMMANDER
+#ifdef DEBUG
+    writeLog('D', ORIGIN_RUN, 200, "Sensors processed");
+#endif
+
+ #ifndef NO_COMMANDER
     CMD->listen();
+#endif
+
+#ifdef DEBUG
+    writeLog('D', ORIGIN_RUN, 200, "CMD listen passed");
+#endif
+
+#ifdef WATCH_DOG
+    wdt_reset();
 #endif
 
     if (BT && CTX->remoteMode) {
@@ -176,12 +206,22 @@ void Pwr::run() {
         CTX->connected = newConnected;
     }
 
+#ifdef DEBUG
+    writeLog('D', ORIGIN_RUN, 200, "Connected check");
+#endif
+
     if (CTX->canAccessLocally() && test_timer(TIMER_2HZ)) {
         fillOutput();
+#ifdef DEBUG
+        writeLog('D', ORIGIN_RUN, 200, "Fill output");
+#endif
     }
 
 #ifndef NO_CONTROLLER
     CTRL->process();
+#ifdef DEBUG
+    writeLog('D', ORIGIN_RUN, 200, "CTRL processed");
+#endif
     if (!(timerCounter_1Hz % (TIMERS_FLASH_COUNTS - 1))) {
         CTRL->adjustBrightness();
     }
@@ -206,7 +246,7 @@ void Pwr::run() {
     }
 
 #ifndef NO_CONTROLLER
-    CTRL->setIndicators(INDICATORS.DATA);
+    CTRL->setIndicators(INDICATORS.multiplexed);
 #endif
 
     timerFlags = 0;
@@ -250,7 +290,7 @@ void Pwr::loadDisarmedStates() {
         run_states[i]->disarm(disarm);
 #ifdef DEBUG
         if (disarm) {
-            Serial.println(printState(i));
+            Serial.println(CMD->printState(i));
         }
 #endif
     }

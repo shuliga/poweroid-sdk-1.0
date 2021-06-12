@@ -38,6 +38,26 @@ uint8_t flashStringHelperToChar(const __FlashStringHelper *ifsh, char *dst) {
 
 void noInfoToBuff() { strcpy(BUFF, NO_INFO_STR); }
 
+void writeLog(char severity, const char *source, uint16_t code) {
+    char buff[32];
+    sprintf(buff, "%c [%s] %d\0", severity, source, code);
+    Serial.println(buff);
+    Serial.flush();
+}
+
+void writeLog(char severity, const char *source, uint16_t code, unsigned long value) {
+    char buff[32];
+    sprintf(buff, "%c [%s] %d, %d\0", severity, source, code, value);
+    Serial.println(buff);
+    Serial.flush();
+}
+
+void writeLog(char severity, const char *source, uint16_t code, const char * descr) {
+    char buff[64];
+    sprintf(buff, "%c [%s] %d, %s\0", severity, source, code, descr);
+    Serial.println(buff);
+    Serial.flush();
+}
 
 #ifdef WATCH_DOG
 

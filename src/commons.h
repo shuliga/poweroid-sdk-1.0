@@ -80,4 +80,8 @@ uint8_t flashStringHelperToChar(const __FlashStringHelper *ifsh, char *dst);
 
 void noInfoToBuff();
 
+void writeLog(char severity, const char * source, uint16_t code);
+void writeLog(char severity, const char * source, uint16_t code, unsigned long value);
+void writeLog(char severity, const char * source, uint16_t code, const char * descr);
+
 #endif // COMMONS_H

@@ -1,6 +1,14 @@
 #include "timings.h"
 #include <Arduino.h>
 
+void splitTime(long millis, TimeSplit& timeSplit){
+    timeSplit.totalSec = static_cast<uint16_t>(millis / 1000);
+    timeSplit.hrs = static_cast<uint8_t>(timeSplit.totalSec / 3600);
+    timeSplit.secM = timeSplit.totalSec - (timeSplit.hrs * 3600);
+    timeSplit.mins = static_cast<uint8_t>(timeSplit.secM / 60);
+    timeSplit.sec = static_cast<uint8_t>(timeSplit.secM - (timeSplit.mins * 60));
+}
+
 unsigned long TimingState::getCurrent() {
     unsigned long current = millis();
     if (current < mils) {
@@ -24,11 +32,6 @@ long TimingState::millsToGo(unsigned long current) {
     return interval - (current - mils - delta);
 }
 
-/*
- * Returns 'true' if Timer interval has passed since 'state_on' was set to true.
- * Returns 'false' if 'state_on' is set to false.
- *
- */
 bool TimingState::countdown(bool trigger, bool suspend, bool cancel) {
     unsigned long current = getCurrent();
     if (!state && !dirty && trigger) {
@@ -58,11 +61,6 @@ bool TimingState::countdown(bool trigger, bool suspend, bool cancel) {
     return state;
 }
 
-/*
- * Returns 'true' if Timer interval has passed, since 'state_on' was set from 'false' to 'true'.
- * Returns 'false' if 'state_on' is set to false.
- *
- */
 bool TimingState::isTimeAfter(bool state_on) {
     unsigned long current = getCurrent();
     if (state_on) {
@@ -85,11 +83,6 @@ bool TimingState::flash() {
     return state;
 }
 
-/*
- * Returns true if Timer interval has passed since last call.
- * Each subsequent call resets counter.
- *
- */
 bool TimingState::ping() {
     unsigned long current = getCurrent();
     if (testInterval(current)) {

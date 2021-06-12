@@ -15,9 +15,9 @@
 
 #define test_timer(timer) (timerFlags >> timer) & 1U
 
-#define flash_symm(counter) counter < 2
-#define flash_accent(counter) counter == 0
-#define flash_(counter) counter % 2 == 0
+#define flash_symm(counter) (counter < 2)
+#define flash_accent(counter) (counter == 0)
+#define flash_(counter) (counter % 2 == 0)
 
 const unsigned long MAX_LONG = 4294967295L;
 
@@ -25,6 +25,15 @@ extern uint8_t timerFlags;
 extern uint8_t timerCounter_1Hz;
 extern uint8_t timerCounter_4Hz;
 
+typedef struct TimeSplit {
+    uint16_t totalSec;
+    uint8_t hrs;
+    uint16_t secM;
+    uint8_t mins;
+    uint8_t sec;
+};
+
+void splitTime(long millis, TimeSplit& timeSplit);
 
 typedef struct TimingState {
     unsigned long mils;
@@ -47,9 +56,9 @@ typedef struct TimingState {
      * If countdown was ended or cancelled, while <code>trigger</code> is on, it can be restarted only after setting <code>trigger</code> to false.
      * Also reset() can be called to countdown reinitialize.
      *
-     * @param trigger triggers countdown, should pass false state to initiate next countdown
-     * @param suspend suspends countdown timer
-     * @param cancel cancels countdown
+     * @param trigger Triggers countdown, should pass <code>false</code> state to initiate next countdown
+     * @param suspend Suspends countdown timer
+     * @param cancel Cancels countdown
      *
      * @return true if triggered and not suspended or cancelled
      *
@@ -58,7 +67,7 @@ typedef struct TimingState {
 
     /**
      *
-     * Defines if time has passed since <code>state_on</code> was set to true.<br/>
+     * Returns 'true' if time has passed since <code>state_on</code> was set from 'false' to 'true'.<br/>
      * As soon as <code>state_on</code> is false, the result is reset to false as well.
      *
      * @param state_on
@@ -77,8 +86,8 @@ typedef struct TimingState {
 
     /**
      *
-     * Returns true once when timer interval has passed, then false.
-     * The timer is set back again and cycle continues.
+     * Returns 'true' once, when timer interval has passed since last call, then 'false'.
+     * Each subsequent call resets counter. The timer is set back again and cycle continues.
      *
      * @return ping state
      */

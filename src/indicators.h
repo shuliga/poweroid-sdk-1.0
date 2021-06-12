@@ -19,7 +19,7 @@
 class Indicators{
 public:
 
-    uint8_t DATA = 0;
+    uint8_t multiplexed = 0;
 
     void init();
     void set(uint8_t i, bool on);

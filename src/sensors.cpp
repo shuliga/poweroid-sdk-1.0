@@ -50,11 +50,18 @@ void Sensors::searchDHT() {
             }
         }
         dht_installed = true;
+    } else {
+#ifdef DEBUG
+        writeLog('I', ORIGIN, 510, DHT_PIN);
+#endif
     }
 }
 
 void Sensors::updateDHT() {
     if (dht_installed && test_timer(TIMER_0_25HZ)) {
+#ifdef DEBUG
+        writeLog('I', ORIGIN, 100, "DHT update");
+#endif
         updateDhtDirect();
     }
 }
@@ -94,21 +101,27 @@ void Sensors::initSensors() {
     analogReference(REF_1V1 ? INTERNAL_REF : DEFAULT);
     for(uint8_t i = 0; i < ARRAY_SIZE(INA_PINS); i++){
         pinMode(INA_PINS[i], INPUT);
+#ifdef DEBUG
+        writeLog('D', ORIGIN, 110, INA_PINS[i]);
+#endif
     }
     for(uint8_t i = 0; i < ARRAY_SIZE(IN_PINS); i++){
         pinMode(IN_PINS[i], INPUT_PULLUP);
+#ifdef DEBUG
+        writeLog('D', ORIGIN, 120, IN_PINS[i]);
+#endif
     }
-    delay(1000L);
+    delay(500L);
     searchDHT();
 
 #ifdef DEBUG
-    Serial.println("SENSORS passed");
+    writeLog('D', ORIGIN, 200, "Passed");
 #endif
 
 }
 
 void Sensors::process() {
-    setInstalled();
+//    setInstalled();
     updateDHT();
 }
 

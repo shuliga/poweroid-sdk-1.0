@@ -57,7 +57,7 @@ void Bt::begin() {
     }
     Serial.println();
 #ifdef DEBUG
-    Serial.println("BT passed");
+    writeLog('I', ORIGIN, 200, "Passed");
 #endif
 }
 

@@ -15,6 +15,8 @@
 #include "datetime.h"
 #endif
 
+#define ORIGIN "CONTROLLER"
+
 #define I2C_CONTROLLER_ADDR 0x25
 
 #define INCR(val, max) val < (max) ? (val)++ : val
@@ -109,9 +111,6 @@ void Controller::begin() {
     props_idx_max = ctx->props_size - 1;
     state_idx_max = state_count - 1;
 
-#ifdef DEBUG
-    Serial.println("CONTROLLER passed");
-#endif
 }
 
 void Controller::initEncoderInterrupts() {
@@ -142,6 +141,9 @@ void Controller::adjustBrightness() {
 }
 
 void Controller::outputHeader(bool relays) const {
+#ifdef INFO
+    writeLog('D', ORIGIN, 200, "Out header");
+#endif
     strcpy(BUFF, relays ? (const char *) ctx->RELAYS.relStatus() : ctx->id);
     padLineInBuff(BUFF, 1, 0);
     if (relays) {
@@ -160,6 +162,9 @@ void Controller::outputBuffCentered() {
 }
 
 void Controller::setIndicators(uint8_t data) {
+#ifdef DEBUG
+    writeLog('I', ORIGIN, 300, data);
+#endif
 #ifdef I2C_CONTROLLER
     I2c.write((uint8_t)I2C_CONTROLLER_ADDR, data);
 #endif
@@ -173,14 +178,14 @@ void Controller::process() {
 
     McEvent event = encoderClick.checkButton();
 
-#ifdef I2C_CONTROLLER
+    #ifdef I2C_CONTROLLER
 
     uint8_t ctrlBuff[2];
     I2c.read(I2C_CONTROLLER_ADDR, 2, ctrlBuff);
 
     uint8_t  inc_dec = ctrlBuff[0] & 0x03;
     if (inc_dec > 0 ){
-        processEncoderInput(inc_dec == 2 ? DIR_CW : DIR_CCW);
+        processEncoder(inc_dec == 2 ? DIR_CW : DIR_CCW);
     }
 
     for (uint8_t i = 0 ; i < PWR_SIZE; i++){
@@ -228,7 +233,6 @@ void Controller::process() {
         }
 
         case BROWSE: {
-
             bool prop_id_changed = c_prop_idx != prop_idx;
 
             if (testControl(sleep_timer) || prop_id_changed || ctx->refreshProps || ctx->refreshState) {
