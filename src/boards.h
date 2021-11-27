@@ -35,13 +35,13 @@
 #endif  //MINI
 
 //Relay pins
-#ifndef PWR1_PIN
-#define PWR1_PIN 9
+#ifndef PWR_A_PIN
+#define PWR_A_PIN 9
 #endif
 
 #ifndef MINI
-#ifndef PWR2_PIN
-#define PWR2_PIN 8
+#ifndef PWR_B_PIN
+#define PWR_B_PIN 8
 #endif
 #endif  //MINI
 
@@ -91,13 +91,13 @@
 #endif  //MINI
 
 //Relay pins
-#ifndef PWR1_PIN
-#define PWR1_PIN 8
+#ifndef PWR_A_PIN
+#define PWR_A_PIN 8
 #endif
 
 #ifndef MINI
-#ifndef PWR2_PIN
-#define PWR2_PIN 9
+#ifndef PWR_B_PIN
+#define PWR_B_PIN 9
 #endif
 #endif  //MINI
 
@@ -139,8 +139,8 @@
 #define IN3_PIN 6
 
 //Relay pins
-#define PWR1_PIN 10
-#define PWR2_PIN 11
+#define PWR_A_PIN 10
+#define PWR_B_PIN 11
 
 #define LED_PIN 13
 

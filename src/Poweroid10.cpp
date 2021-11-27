@@ -187,8 +187,16 @@ void Pwr::run() {
     writeLog('D', ORIGIN_RUN, 200, "Sensors processed");
 #endif
 
- #ifndef NO_COMMANDER
+#ifndef NO_COMMANDER
     CMD->listen();
+
+    if (BT && CTX->remoteMode) {
+        newConnected = CMD->isConnected();
+        updateConnected = newConnected != CTX->connected;
+        CTX->systemStatusChanged = CTX->systemStatusChanged || updateConnected;
+        CTX->connected = newConnected;
+    }
+
 #endif
 
 #ifdef DEBUG
@@ -198,13 +206,6 @@ void Pwr::run() {
 #ifdef WATCH_DOG
     wdt_reset();
 #endif
-
-    if (BT && CTX->remoteMode) {
-        newConnected = CMD->isConnected();
-        updateConnected = newConnected != CTX->connected;
-        CTX->systemStatusChanged = CTX->systemStatusChanged || updateConnected;
-        CTX->connected = newConnected;
-    }
 
 #ifdef DEBUG
     writeLog('D', ORIGIN_RUN, 200, "Connected check");
@@ -288,7 +289,7 @@ void Pwr::loadDisarmedStates() {
     for (uint8_t i = 0; i < state_count; i++) {
         bool disarm = CTX->PERS.loadState(i);
         run_states[i]->disarm(disarm);
-#ifdef DEBUG
+#if defined(DEBUG) && !defined(NO_COMMANDER)
         if (disarm) {
             Serial.println(CMD->printState(i));
         }
@@ -308,7 +309,9 @@ void Pwr::processChangedStates() {
     for (uint8_t i = 0; i < state_count; i++) {
         if (run_states[i]->changed) {
             if (CTX->canRespond()) {
+#ifndef NO_COMMANDER
                 Serial.println(CMD->printState(i));
+#endif
             }
             run_states[i]->changed = false;
         }

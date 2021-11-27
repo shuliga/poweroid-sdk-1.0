@@ -33,6 +33,7 @@ public:
     T* firstEntry();
     T state;
     T prev_state;
+    T prev_stored_state;
 protected:
     T init_state;
     T disarmed_state;
@@ -51,7 +52,8 @@ template<class T>
 T* StateHolder<T>::firstEntry() {
     T* result = 0;
     if (prev_state != state) {
-        result = &prev_state;
+        prev_stored_state = prev_state;
+        result = &prev_stored_state;
         prev_state = state;
         changed = true;
     } else {

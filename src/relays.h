@@ -12,9 +12,9 @@
 #endif
 
 #ifndef MINI
-const uint8_t OUT_PINS[] = {PWR1_PIN, PWR2_PIN};
+const uint8_t OUT_PINS[] = {PWR_A_PIN, PWR_B_PIN};
 #else
-const uint8_t OUT_PINS[] = {PWR1_PIN};
+const uint8_t OUT_PINS[] = {PWR_A_PIN};
 #endif
 #define REL_COUNT ARRAY_SIZE(OUT_PINS)
 
