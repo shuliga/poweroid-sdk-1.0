@@ -9,14 +9,14 @@
 
 class StateHolderBase {
 public:
-    StateHolderBase( const char *name, const char *states[]) : name(name), states(states) {};
+    StateHolderBase( const char *name, const char *states[]) : name(name), statesNames(states) {};
     virtual bool isDisarmed() = 0;
     virtual void disarm(bool disarm) = 0;
     virtual const char* getState() = 0;
     virtual bool wasChanged() = 0;
     bool changed = false;
     const char *name;
-    const char **states;
+    const char **statesNames;
 };
 
 template <class T>
@@ -71,7 +71,7 @@ void StateHolder<T>::disarm(bool disarm) {
 
 template<class T>
 const char* StateHolder<T>::getState(){
-    return states[state];
+    return statesNames[state];
 }
 
 template<class T>

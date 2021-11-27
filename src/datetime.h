@@ -19,12 +19,14 @@
 #define _datetime_get_idx( TPM ) (TPM % 10)
 #define _datetime_get_max( TPM ) ((TPM - TPM % 10) / 10)
 
+#define TIME_STRING_SIZE 9
+#define DATE_STRING_SIZE 9
 
 extern const char * TIME_FMT;
 extern const char * DATE_FMT;
 
-extern char dateString[9];
-extern char timeString[9];
+extern char timeString[TIME_STRING_SIZE];
+extern char dateString[DATE_STRING_SIZE];
 
 extern const char time[5];
 extern const char date[5];

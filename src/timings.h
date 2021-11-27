@@ -51,10 +51,10 @@ typedef struct TimingState {
 
     /**
      *
-     * Returns <code>true</code> as soon as initiated by <code>trigger</code> and till timer countdown was not reached.<br/>
+     * Returns 'true as soon as initiated by <code>trigger</code> and till timer countdown was not reached.<br/>
      * Countdown can be temporary suspended or permanently canceled.<br/>
-     * If countdown was ended or cancelled, while <code>trigger</code> is on, it can be restarted only after setting <code>trigger</code> to false.
-     * Also reset() can be called to countdown reinitialize.
+     * If countdown was ended or cancelled, while <code>trigger</code> is on, it can be restarted only after setting <code>trigger</code> to 'false'.
+     * Also <code>reset()</code> can be called to countdown reinitialize.
      *
      * @param trigger Triggers countdown, should pass <code>false</code> state to initiate next countdown
      * @param suspend Suspends countdown timer
@@ -68,7 +68,7 @@ typedef struct TimingState {
     /**
      *
      * Returns 'true' if time has passed since <code>state_on</code> was set from 'false' to 'true'.<br/>
-     * As soon as <code>state_on</code> is false, the result is reset to false as well.
+     * As soon as <code>state_on</code> is 'false', the result is reset to 'false' as well.
      *
      * @param state_on
      * @return true if time has passed
@@ -87,7 +87,7 @@ typedef struct TimingState {
     /**
      *
      * Returns 'true' once, when timer interval has passed since last call, then 'false'.
-     * Each subsequent call resets counter. The timer is set back again and cycle continues.
+     * On success, the timer is set back again and cycle continues.
      *
      * @return ping state
      */

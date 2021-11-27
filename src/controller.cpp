@@ -140,13 +140,14 @@ void Controller::adjustBrightness() {
     oled.setBrightness(DAYLIGHT ? 255 : 0);
 }
 
-void Controller::outputHeader(bool relays) const {
+void Controller::outputHeader(bool currentState) const {
 #ifdef INFO
     writeLog('D', ORIGIN, 200, "Out header");
 #endif
-    strcpy(BUFF, relays ? (const char *) ctx->RELAYS.relStatus() : ctx->id);
+    strcpy(BUFF, currentState ? (const char *) ctx->RELAYS.relStatus() : ctx->id);
     padLineInBuff(BUFF, 1, 0);
-    if (relays) {
+    if (currentState) {
+        strncpy(CUSTOM_HEADER, ctx->alarm ? "(!)" : (ctx->timerEnabled ? (ctx->timerEngaged ? ">T<" : " T ") : "   "), 3);
         strncpy(BUFF + ctx->RELAYS.size() * 2 + 2, CUSTOM_HEADER, 3);
     }
     if (TOKEN_ENABLE || ctx->remoteMode) {
@@ -240,7 +241,7 @@ void Controller::process() {
                 if (loadProperty(prop_idx)) {
                     outputPropDescr(BUFF);
                     outputPropVal(prop_measure, (int16_t) prop_value, false, true);
-                    outputStatus(F("Property:"), prop_idx + 1);
+                    outputStatus(0, prop_idx + 1);
                 }
             }
 
@@ -265,7 +266,7 @@ void Controller::process() {
                 outputPropDescr(BUFF);
                 strcpy(BUFF, run_states[state_idx]->getState());
                 outputBuffCentered();
-                outputStatus(F("State:"), state_idx);
+                outputStatus(0, state_idx);
                 c_state_idx = state_idx;
             }
 
@@ -335,7 +336,7 @@ void Controller::process() {
                 prop_min = -1;
                 DATETIME.getDateString(dateString);
                 DATETIME.getTimeString(timeString);
-                outputStatus(F("     "), 0);
+                outputStatus(0, 0);
             }
 
             if (prop_value != 0) {
@@ -662,13 +663,23 @@ void Controller::outputDescr(const char *_buff, uint8_t lines) const {
 }
 
 void Controller::outputStatus(const __FlashStringHelper *txt, const long val) {
-    flashStringHelperToChar(txt, BUFF);
     oled.setTextXY(DISPLAY_BOTTOM, 0);
-    uint8_t prop_size = static_cast<uint8_t>(val > 0 ? log10((double) val) + 1 : (val == 0 ? 1 : log10((double) -val) +
-                                                                                                 2));
-    padLineInBuff(BUFF, 1, prop_size);
+    uint8_t val_pos = 0;
+    padLineInBuff("\0", 1, 0);
+    if (txt) {
+        flashStringHelperToChar(txt, BUFF);
+        uint8_t val_size = static_cast<uint8_t>(val > 0 ? log10((double) val) + 1 : (val == 0 ? 1 : log10((double) -val) + 2));
+        val_pos = (unsigned char) (LINE_SIZE - val_size);
+        padLineInBuff(BUFF, 1, val_size);
+    } else {
+#ifdef RTCM
+        char time[TIME_STRING_SIZE];
+        DATETIME.getTimeString(time);
+        strncpy(BUFF + LINE_SIZE - 5, time, 5);
+#endif
+    }
     oled.putString(BUFF);
-    oled.setTextXY(DISPLAY_BOTTOM, (unsigned char) (LINE_SIZE - prop_size));
+    oled.setTextXY(DISPLAY_BOTTOM, val_pos);
     oled.putNumber(val);
 }
 

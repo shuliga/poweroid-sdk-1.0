@@ -61,7 +61,7 @@ private:
 
     void copyProperty(Property &prop, uint8_t idx) const;
 
-    void outputHeader(bool relays) const;
+    void outputHeader(bool currentState) const;
 
     bool canGoToEdit();
 
