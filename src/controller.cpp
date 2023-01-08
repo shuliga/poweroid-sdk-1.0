@@ -632,7 +632,7 @@ void Controller::copyProperty(Property &prop, uint8_t idx) const {
 
 void Controller::updateProperty(uint8_t idx) const {
     if (ctx->canAccessLocally()) {
-        ctx->PROPERTIES[idx].runtime = prop_value * ctx->PROPERTIES[idx].scale;
+        ctx->PROPERTIES[idx].updateRuntime(prop_value);
     } else {
         if (ctx->connected) {
             sprintf(BUFF, "%i:%lu", idx, prop_value);

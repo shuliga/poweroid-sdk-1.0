@@ -13,6 +13,7 @@ typedef struct CommandsStr {
     const char* CMD_GET_STATE;
     const char* CMD_DISARM_STATE;
     const char* CMD_SET_FLAGS;
+    const char* CMD_GET_FLAGS;
 #ifdef ALLOW_TOKEN
     const char* CMD_SET_TOKEN;
     const char* CMD_PASS_TOKEN;
@@ -23,12 +24,10 @@ typedef struct CommandsStr {
     const char* CMD_SET_PROP;
     const char* CMD_LOAD_PROPS;
     const char* CMD_STORE_PROPS;
-    const char* CMD_RESET_PROPS;
     const char* CMD_SET_RELAY;
     const char* CMD_REMOTE_STATE;
     const char* CMD_GET_ALL_PROP;
 #ifndef SAVE_RAM
-    const char* CMD_GET_FLAGS;
     const char* CMD_GET_ALL_STATE;
     const char* CMD_GET_ALL_SENSOR;
     const char* CMD_GET_ALL_RELAY;

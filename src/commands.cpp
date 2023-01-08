@@ -13,6 +13,7 @@ Cu cu{
                   "get_state_",
                   "disarm_state_",
                   "set_flags",
+                  "get_flags",
 #ifdef ALLOW_TOKEN
                   "set_token",
                   "pass_token",
@@ -23,12 +24,10 @@ Cu cu{
                   "set_prop_",
                   "load_props",
                   "store_props",
-                  "reset_props",
                   "set_relay_",
                   "remote_state ",
                   "get_all_prop",
 #ifndef SAVE_RAM
-                  "get_flags",
                   "get_all_state",
                   "get_all_sensor",
                   "get_all_relay"

@@ -32,7 +32,9 @@ typedef struct Property {
     long scale = 1;
 
     Property(){}
-    Property(long v, long n, long m, long s) : minv(n), maxv(m), val(v), scale(s) {}
+    Property(long v, long n, long m, long s) : minv(n), maxv(m), val(v), scale(s), runtime(v) {}
+
+    void updateRuntime(long new_value);
 };
 
 #endif

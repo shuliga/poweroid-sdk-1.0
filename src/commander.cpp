@@ -78,15 +78,6 @@ void Commander::listen() {
                 }
 #endif
 
-                if (cmd.startsWith(cu.cmd_str.CMD_RESET_PROPS)) {
-                    printCmdResponse(cmd, NULL);
-                    for (uint8_t i = 0; i < ctx->props_size; i++) {
-                        ctx->PROPERTIES[i].runtime = ctx->PROPERTIES[i].val;
-                    }
-                    ctx->refreshProps = true;
-                    ctx->propsUpdated = true;
-                }
-
                 if (cmd.startsWith(cu.cmd_str.CMD_SET_RELAY)) {
                     Relays relays = ctx->RELAYS;
                     int8_t i = ctx->passive ? relays.getMappedFromVirtual(getIndex()) : getIndex();
@@ -152,7 +143,7 @@ void Commander::listen() {
                         int8_t idx = getValIndex();
                         if (i < ctx->props_size && idx > 0) {
                             long v = cmd.substring((unsigned int) idx).toInt();
-                            ctx->PROPERTIES[i].runtime = v * ctx->PROPERTIES[i].scale;
+                            ctx->PROPERTIES[i].updateRuntime(v);
                             ctx->refreshProps = true;
                             ctx->propsUpdated = true;
                             printCmdResponse(cmd, printProperty(i));
@@ -173,13 +164,13 @@ void Commander::listen() {
                     disarmStateCmd(i, trigger);
                 }
 
-#ifndef SAVE_RAM
                 if (cmd.startsWith(cu.cmd_str.CMD_GET_FLAGS)) {
                     char bin[9];
                     itoa(PWR_FLAGS, bin, 2);
                     printCmdResponse(cmd, bin);
                 }
 
+#ifndef SAVE_RAM
                 if (cmd.startsWith(cu.cmd_str.CMD_GET_ALL_STATE)) {
                     for (uint8_t i = 0; i < state_count; i++) {
                         printCmdResponse(cmd, printState(i));
